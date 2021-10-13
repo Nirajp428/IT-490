@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+session_start();
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
@@ -9,14 +10,19 @@ if (isset($argv[1]))
 {
   $msg = $argv[1];
 }
-else
-{
-  $msg = "test message";
-}
+#else
+#{
+#  $msg = $message;
+#}
+
+$msg = $_SESSION['message'];
+$timestamp = $_SESSION['timestamp'];
+$type = $_SESSION['type'];
 
 $request = array();
-$request['type'] = "Login";
-$request['username'] = "steve";
+$request['type'] = $type;
+$request['timestamp'] = $timestamp;
+$request['username'] = "kevin";
 $request['password'] = "password";
 $request['message'] = $msg;
 $response = $client->send_request($request);

@@ -4,6 +4,25 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+function logError($timestamp, $message)
+{
+	#check if log file exists, if not create one
+	$currentUser = get_current_user();
+	$logfile = "/home/$currentUser/Desktop/logfile.txt";
+
+	#if log file does not exits, create it and redo log fuction
+	if (!file_exists($logfile)) {
+		mkdir ("/home/$currentUser/Desktop/logfile.txt", 0744);
+		logError($timestamp, $message);
+	}
+
+	#append function paramaters to log file
+	$logfile = fopen("/home/$currentUser/Desktop/logfile.txt", "a") or die("Unable to open file!");
+	fwrite($logfile, $timestamp . "\n");
+	fwrite($logfile, $message ."\n");
+	fclose($logfile);
+}
+
 function doLogin($username,$password)
 {
     // lookup username in databas
@@ -22,6 +41,8 @@ function requestProcessor($request)
   }
   switch ($request['type'])
   {
+    case "error":
+      return logError($request['timestamp'], $request['message']);
     case "login":
       return doLogin($request['username'],$request['password']);
     case "validate_session":
@@ -37,4 +58,3 @@ $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END".PHP_EOL;
 exit();
 ?>
-
