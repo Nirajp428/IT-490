@@ -6,14 +6,6 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 $client = new rabbitMQClient("testRabbitMQ.ini","testServer");
-if (isset($argv[1]))
-{
-  $msg = $argv[1];
-}
-#else
-#{
-#  $msg = $message;
-#}
 
 $msg = $_SESSION['message'];
 $timestamp = $_SESSION['timestamp'];
@@ -32,5 +24,5 @@ echo "client received response: ".PHP_EOL;
 print_r($response);
 echo "\n\n";
 
-echo $argv[0]." END".PHP_EOL;
+#echo $argv[0]." END".PHP_EOL;
 
