@@ -3,6 +3,7 @@
 session_start();
 function sendError($message)
 {
+	$_SESSION['destination'] = "logexchange";
 	$_SESSION['type'] = "error";
 	$_SESSION['timestamp'] = date('m-d-Y--h:i:s a');
 	$_SESSION['message'] = $message;
