@@ -9,7 +9,9 @@ require_once('rabbitMQLib.inc');
 
 #$msg = $_SESSION['message'];
 #$timestamp = $_SESSION['timestamp'];
-#$type = $_SESSION['type'];
+
+
+$type = $_SESSION['type'];
 
 
 $request = array();
@@ -18,22 +20,26 @@ $request['type'] = $_SESSION['type'];
 
 switch ($type) {
 	case "error":
+		$request['type'] = $_SESSION['type'];
 		$request['timestamp'] = $_SESSION['timestamp'];
 		$request['message'] = $_SESSION['message'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","logExchangeServer");
 		break;
 	case "login":
+		$request['type'] = $_SESSION['type'];
 		$request['username'] = $_SESSION['username'];
 		$request['password'] = $_SESSION['password'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
 	case "register":
+		$request['type'] = $_SESSION['type'];
 		$request['username'] = $_SESSION['username'];
                 $request['password'] = $_SESSION['password'];
 		$request['email'] = $_SESSION['email'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
 	case "validateSession":
+		$request['type'] = $_SESSION['type'];
 		$request['sessionID'] = $_SESSION['sessionID'];
                 $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
                 break;
