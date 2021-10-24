@@ -15,13 +15,42 @@ function logError($timestamp, $message)
 	fclose($logfile);
 }
 
+#DB function
+function validateSession($sessionID)
+{
+	// everytime a user accesses a page
+	// check DB table if sessionID is still valid
+	// return true if valid
+	// return false if not, redirect user to login page
+}
+
+# DB function
 function doLogin($username,$password)
 {
-    // lookup username in databas
-    // check password
-    return true;
-    //return false if not valid
+    // lookup username in database
+    // check if password hash matches username
+	return "Received login request";
+    // return true;
+    //else return false if not valid
 }
+
+# DB function
+function register($username, $password, $email)
+{
+	// check if user already exists
+	// if false, add user information to db table
+	// tell user their account has been successfully created
+	// prompt log in page
+}
+
+# DB function
+function updateDBFromAPI()
+{
+	// data recieved from dmz server
+	// figure out how to parse json data to update db
+}
+
+
 
 function requestProcessor($request)
 {
@@ -33,16 +62,21 @@ function requestProcessor($request)
   }
   switch ($request['type'])
   {
-    case "error":
-      return logError($request['timestamp'], $request['message']);
-    case "login":
-      return doLogin($request['username'],$request['password']);
-    case "validate_session":
-      return doValidate($request['sessionId']);
+	case "error":
+		return logError($request['timestamp'], $request['message']);
+	case "updatedb":
+		return updateDBFromAPI();
+	case "login":
+		return doLogin($request['username'],$request['password']);
+	case "register":
+		return register($request['username'],$request['password'],$request['email']);
+	case "validate_session":
+		return validateSession($request['sessionId']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request and processed");
 }
 
+# $server only cares about the queue its assigned in the testRabbitMQ.ini file.  
 $server = new rabbitMQServer("testRabbitMQ.ini","logExchangeServer");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
