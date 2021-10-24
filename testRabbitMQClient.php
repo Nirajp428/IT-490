@@ -5,22 +5,14 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-#$destination = $_SESSION['destination'];
-
-#$msg = $_SESSION['message'];
-#$timestamp = $_SESSION['timestamp'];
-
-
 $type = $_SESSION['type'];
-
-
 $request = array();
-$request['type'] = $_SESSION['type'];
 
 
 switch ($type) {
 	case "error":
 		$request['type'] = $_SESSION['type'];
+		$request['source'] = $_SESSION['source'];
 		$request['timestamp'] = $_SESSION['timestamp'];
 		$request['message'] = $_SESSION['message'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","logExchangeServer");

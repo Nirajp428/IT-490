@@ -4,14 +4,14 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-function logError($timestamp, $message)
+function logError($timestamp, $message, $source)
 {
 	$currentUser = get_current_user();
 
 	#append function paramaters to log file
 	$logfile = fopen("/home/$currentUser/Desktop/logfile.txt", "a") or die("Unable to open file!");
 	
-	fwrite($logfile, "$timestamp\t$message\n");
+	fwrite($logfile, "$timestamp\t$source\t$message\n");
 	fclose($logfile);
 }
 
@@ -63,7 +63,7 @@ function requestProcessor($request)
   switch ($request['type'])
   {
 	case "error":
-		return logError($request['timestamp'], $request['message']);
+		return logError($request['timestamp'], $request['message'], $request['source']);
 	case "updatedb":
 		return updateDBFromAPI();
 	case "login":
