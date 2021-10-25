@@ -29,7 +29,7 @@ function doLogin($username,$password)
 {
     // lookup username in database
     // check if password hash matches username
-	return "Received login request";
+	return True;
     // return true;
     //else return false if not valid
 }
@@ -67,7 +67,8 @@ function requestProcessor($request)
 	case "updatedb":
 		return updateDBFromAPI();
 	case "login":
-		return doLogin($request['username'],$request['password']);
+		$response = doLogin($request['username'],$request['password']);
+		break;
 	case "register":
 		return register($request['username'],$request['password'],$request['email']);
 	case "validate_session":
