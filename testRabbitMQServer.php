@@ -70,6 +70,15 @@ function getMovie($movie)
 	}
 }
 
+function APICall($movie)
+{
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "https://www.omdbapi.com/?t=$movie&apikey=a7bdaf57");
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	$contents = curl_exec($ch);
+	return $contents;
+}
+
 
 
 function requestProcessor($request)
@@ -92,6 +101,9 @@ function requestProcessor($request)
 	case "request":
 		$response = getMovie($request['movie']);
 		break;
+	case "APIrequest":
+		$response = APICall($request['movie']);
+                break;
 	case "validate_session":
 		return validateSession($request['sessionId']);
   }
