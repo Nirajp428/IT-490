@@ -1,6 +1,6 @@
 
 
-CREATE TABLE 'rections' (
+CREATE TABLE 'reactions' (
 	'id' int(11) NOT NULL,
 	'user_id' int(11) NOT NULL,
 	'reaction' tinyint(1) NOT NULL DEFAULT '1'
