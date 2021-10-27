@@ -35,6 +35,11 @@ switch ($type) {
 		$request['movie'] = $_SESSION['movie'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
+	case "APIrequest":
+		$request['type'] = $_SESSION['type'];
+                $request['movie'] = $_SESSION['movie'];
+                $client = new rabbitMQClient("testRabbitMQ.ini","dmzServer");
+                break;
 	case "validateSession":
 		$request['type'] = $_SESSION['type'];
 		$request['sessionID'] = $_SESSION['sessionID'];

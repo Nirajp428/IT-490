@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+session_start();
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
@@ -44,10 +45,25 @@ function register($username, $password, $email)
 }
 
 # DB function
-function updateDBFromAPI()
+function getMovie($movie)
 {
-	// data recieved from dmz server
-	// figure out how to parse json data to update db
+	//code to check if $movie is already in DB
+	//If true, return the movie details to the front end
+	//If false, send the $movie to the dmz server
+
+	// $result = SELECT * FROM table WHERE movieTitle == $movie;
+	$result == "True";
+	if ($result == "True") {
+		return "True";
+	} elseif ($result == "False") {
+		$_SESSION['type'] = 'APIrequest';
+		$_SESSION['movie'] = "$movie";
+        	$response = require("testRabbitMQClient.php");
+       	 	return $response;
+	
+	} else {
+		logError(date('m-d-Y--h:i:s a'), "Boolean error in getMovie() in testRabbitMQServer.php", php_uname('n'));
+	}
 }
 
 
@@ -64,20 +80,21 @@ function requestProcessor($request)
   {
 	case "error":
 		return logError($request['timestamp'], $request['message'], $request['source']);
-	case "updatedb":
-		return updateDBFromAPI();
 	case "login":
 		$response = doLogin($request['username'],$request['password']);
 		break;
 	case "register":
 		return register($request['username'],$request['password'],$request['email']);
+	case "request":
+		$response = getMovie($request['movie']);
+		break;
 	case "validate_session":
 		return validateSession($request['sessionId']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request and processed");
 }
 
-# $server only cares about the queue its assigned in the testRabbitMQ.ini file.  
+# $server only cares about the queue its assigned in the testRabbitMQ.ini file. 
 $server = new rabbitMQServer("testRabbitMQ.ini","logExchangeServer");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
