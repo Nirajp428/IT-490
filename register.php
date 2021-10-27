@@ -31,7 +31,7 @@ if (isset($_POST["register"])) {
     if (!isset($email) || !isset($password) || !isset($confirm)) {
         $isValid = false;
     }
-    // Token validation still needed, this is hashing the password
+    //TODO other validation as desired, remember this is the last line of defense
     if ($isValid) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
