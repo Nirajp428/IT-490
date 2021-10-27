@@ -59,8 +59,12 @@ function getMovie($movie)
 		$_SESSION['type'] = 'APIrequest';
 		$_SESSION['movie'] = "$movie";
         	$response = require("testRabbitMQClient.php");
-       	 	return $response;
-	
+
+		// add $response which contains results form API call to DB
+		#INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...);
+
+		// return $response to front end
+		return $response;
 	} else {
 		logError(date('m-d-Y--h:i:s a'), "Boolean error in getMovie() in testRabbitMQServer.php", php_uname('n'));
 	}
