@@ -18,25 +18,32 @@ function sendLogin($username, $password)
 	$_SESSION['username'] = $username;
 	$_SESSION['password'] = $password;
 	$response = require("testRabbitMQClient.php");
-	return $response;
+	if ($response == "True")
+ 	{
+        	echo "Returned True\n";
+	} elseif ($response == "False") {
+		echo "Returned False\n";
+	} else {
+		sendError("Call to SendLogin (sendMessage.php) did not return a valid response of True or False");
+	}
 }
 #$response = sendLogin("kevin", "password");
-if ($response == "True")
-{
-	echo "Returned True\n";
-} elseif ($response == "False") {
-	echo "Returned False\n";
-} else {
-	sendError("Call to SendLogin (sendMessage.php) did not return a valid response of True or False");
-}
 
 function sendRequest($movie)
 {
 	$_SESSION['type'] = 'request';
 	$_SESSION['movie'] = "$movie";
 	$response = require("testRabbitMQClient.php");
-	return $response
+	return $response;
 }
-#$response = sendRequest("marvel");
-#echo $response
+$response = sendRequest("marvel");
+if ($response == "True")
+        {
+                echo "Returned True\n";
+        } elseif ($response == "False") {
+                echo "Returned False\n";
+	} else {
+		echo $response;
+		echo "\n";
+	}
 ?>

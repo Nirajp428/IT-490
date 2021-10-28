@@ -52,9 +52,9 @@ function getMovie($movie)
 	//If false, send the $movie to the dmz server
 
 	// $result = SELECT * FROM table WHERE movieTitle == $movie;
-	$result == "True";
+	$result = "False";
 	if ($result == "True") {
-		return "True";
+		return True;
 	} elseif ($result == "False") {
 		$_SESSION['type'] = 'APIrequest';
 		$_SESSION['movie'] = "$movie";
@@ -95,15 +95,15 @@ function requestProcessor($request)
 		return logError($request['timestamp'], $request['message'], $request['source']);
 	case "login":
 		$response = doLogin($request['username'],$request['password']);
-		break;
+		return $response;
 	case "register":
 		return register($request['username'],$request['password'],$request['email']);
 	case "request":
 		$response = getMovie($request['movie']);
-		break;
+		return $response;
 	case "APIrequest":
 		$response = APICall($request['movie']);
-                break;
+                return $response;
 	case "validate_session":
 		return validateSession($request['sessionId']);
   }
