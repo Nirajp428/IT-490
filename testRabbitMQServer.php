@@ -38,10 +38,40 @@ function doLogin($username,$password)
 # DB function
 function register($username, $password, $email)
 {
-	// check if user already exists
-	// if false, add user information to db table
-	// tell user their account has been successfully created
-	// prompt log in page
+	// connect to DB
+	$mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
+
+	if ($mydb->errno != 0)
+	{
+		echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+		logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php register function", php_uname('n'));
+        	exit(0);
+	}
+	echo "successfully connected to database".PHP_EOL;
+
+
+	// check if user exists
+	$query = "SELECT * FROM Users WHERE email='$email';";
+	#$query = "INSERT INTO Users (email, password) VALUES ('$email', '$password');";
+	#
+	$response = $mydb->query($query);
+	if($response->num_rows == 0) {
+		echo "Email is already in use, please register with a different email";
+		return "False";
+	} else {
+		// If user not found, insert into DB
+		$query = "INSERT INTO Users (email, password) VALUES ('$email', '$password');";
+		echo "Successfully registered";
+		return "True";
+	}
+
+	if ($mydb->errno != 0)
+	{
+        	echo "failed to execute query:".PHP_EOL;
+		echo __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		logError(date('m-d-Y--h:i:s a'), "Failed to execute register query in testRabbitMQServer.php", php_uname('n'));
+		exit(0);
+	}
 }
 
 # DB function

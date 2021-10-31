@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$mydb = new mysqli('127.0.0.1','root','12345','testdb');
+$mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
 
 if ($mydb->errno != 0)
 {
@@ -11,9 +11,10 @@ if ($mydb->errno != 0)
 
 echo "successfully connected to database".PHP_EOL;
 
-$query = "select * from students;";
+$query = "select * from Users;";
 
 $response = $mydb->query($query);
+print_r ($response);
 if ($mydb->errno != 0)
 {
 	echo "failed to execute query:".PHP_EOL;

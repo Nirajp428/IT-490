@@ -34,16 +34,27 @@ function sendRequest($movie)
 	$_SESSION['type'] = 'request';
 	$_SESSION['movie'] = "$movie";
 	$response = require("testRabbitMQClient.php");
-	return $response;
-}
-$response = sendRequest("marvel");
-if ($response == "True")
+	if ($response == "True")
         {
                 echo "Returned True\n";
         } elseif ($response == "False") {
                 echo "Returned False\n";
-	} else {
-		echo $response;
-		echo "\n";
-	}
+        } else {
+                echo $response;
+                echo "\n";
+        }
+}
+#$response = sendRequest("marvel");
+
+function register($username, $password, $email)
+{
+	$_SESSION['type'] = "register";
+	$_SESSION['username'] = $username;
+	$_SESSION['password'] = $password;
+	$_SESSION['email'] = $email;
+	$response = require('testRabbitMQClient.php');
+	echo $response;
+}
+register("kevin", "password", "km687@njit.edu");
+
 ?>
