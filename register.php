@@ -35,7 +35,7 @@ if (isset($_POST["register"])) {
     if ($isValid) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
-        $db = getDB();
+	$db = getDB();
         if (isset($db)) {
             //here we'll use placeholders to let PDO map and sanitize our data
             $stmt = $db->prepare("INSERT INTO Users(email, username, password) VALUES(:email,:username, :password)");
