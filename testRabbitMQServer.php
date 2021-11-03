@@ -1,16 +1,18 @@
 #!/usr/bin/php
 <?php
-session_start();
+if (!isset($_SESSION)) { session_start(); }
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+
+// Logs errors to 4 VM's
 function logError($timestamp, $message, $source)
 {
 	$currentUser = get_current_user();
 
 	#append function paramaters to log file
-	$logfile = fopen("/home/$currentUser/Desktop/logfile.txt", "a") or die("Unable to open file!");
+	$logfile = fopen("/home/$currentUser/Desktop/logfile.txt", "a") or die("Unable to open log file!");
 	
 	fwrite($logfile, "$timestamp\t$source\t$message\n");
 	fclose($logfile);
@@ -52,17 +54,18 @@ function register($username, $password, $email)
 
 	// check if user exists
 	$query = "SELECT * FROM Users WHERE email='$email';";
-	#$query = "INSERT INTO Users (email, password) VALUES ('$email', '$password');";
-	#
 	$response = $mydb->query($query);
-	if($response->num_rows == 0) {
-		echo "Email is already in use, please register with a different email";
-		return "False";
+
+	if ($response->num_rows == 0) {
+		// User not found, insert into DB
+                $query = "INSERT INTO Users (email, password) VALUES ('$email', '$password');";
+                echo "Successfully registered";
+                return "True";
+
 	} else {
-		// If user not found, insert into DB
-		$query = "INSERT INTO Users (email, password) VALUES ('$email', '$password');";
-		echo "Successfully registered";
-		return "True";
+		// Email already in DB, try again
+		echo "Email is already in use, please register with a different email";
+                return "False";
 	}
 
 	if ($mydb->errno != 0)
@@ -88,18 +91,21 @@ function getMovie($movie)
 	} elseif ($result == "False") {
 		$_SESSION['type'] = 'APIrequest';
 		$_SESSION['movie'] = "$movie";
+
+		// call dmz server
         	$response = require("testRabbitMQClient.php");
 
 		// add $response which contains results form API call to DB
 		#INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...);
 
-		// return $response to front end
+		// return $response to db
 		return $response;
 	} else {
 		logError(date('m-d-Y--h:i:s a'), "Boolean error in getMovie() in testRabbitMQServer.php", php_uname('n'));
 	}
 }
 
+// DMZ function
 function APICall($movie)
 {
 	$ch = curl_init();
@@ -146,5 +152,7 @@ $server = new rabbitMQServer("testRabbitMQ.ini","logExchangeServer");
 echo "testRabbitMQServer BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END".PHP_EOL;
+
+
 exit();
 ?>

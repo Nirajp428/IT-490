@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-session_start();
+if (!isset($_SESSION)) { session_start(); }
 
 function sendError($message)
 {
@@ -45,6 +45,7 @@ function sendRequest($movie)
         }
 }
 #$response = sendRequest("marvel");
+$response = sendRequest("game+of+thrones");
 
 function register($username, $password, $email)
 {
@@ -55,6 +56,6 @@ function register($username, $password, $email)
 	$response = require('testRabbitMQClient.php');
 	echo $response;
 }
-register("kevin", "password", "km687@njit.edu");
+#register("kevin", "password", "km687@njit.edu");
 
 ?>

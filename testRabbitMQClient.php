@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-session_start();
+if (!isset($_SESSION)) { session_start(); }
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
