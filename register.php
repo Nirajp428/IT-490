@@ -35,21 +35,24 @@ if (isset($_POST["register"])) {
     if ($isValid) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
-	$db = getDB();
-        if (isset($db)) {
-            //here we'll use placeholders to let PDO map and sanitize our data
-            $stmt = $db->prepare("INSERT INTO Users(email, username, password) VALUES(:email,:username, :password)");
-            //here's the data map for the parameter to data
-            $params = array(":email" => $email, ":username" => $username, ":password" => $hash);
-            $r = $stmt->execute($params);
-            $e = $stmt->errorInfo();
+	function register($username, $password, $email)
+	{
+		$_SESSION['type'] = "register";
+		$_SESSION['username'] = $username;
+		$_SESSION['password'] = $password;
+		$_SESSION['email'] = $email;
+		$response = require('testRabbitMQClient.php');
+		echo response;
+	}
+	register($username, $hash, $email);
+
+            $e = $response->errorInfo();
             if ($e[0] == "00000") {
 		flash("Successfully registered! Please login.");
             }
             else {
                 if ($e[0] == "23000") {//code for duplicate entry
-                    flash("Username or email already exists.");
-                }
+                    flash("Username or email already exists.");                }
                 else {
                     flash("An error occurred, please try again");
                 }
