@@ -40,14 +40,10 @@ function doLogin($username,$password)
 	if(isset($check)){
 		echo 'Welcome';
 		return 'true';
-	}else
+	} else {
 		echo'Failed to login. Please try again';
 		return 'false';
 	}
-
-
-  
-   
 }
 
 # DB function
