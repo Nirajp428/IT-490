@@ -30,18 +30,31 @@ function validateSession($sessionID)
 # DB function
 function doLogin($username,$password)
 {
-    // lookup username in database
-    // check if password hash matches username
-	return True;
-    // return true;
-    //else return false if not valid
+    // connect to DB
+	$mydb = new mysqli('127.0.0.1','niraj','password','IT490 DB');
+	
+	// look if email and password hashes are in db
+	$query = "SELECT * FROM Users WHERE email='$email' AND password='$password'";	
+	$result = mysqli_query($con,$sql);
+	$check = mysqli_fetch_array($result);
+	if(isset($check)){
+		echo 'Welcome';
+		return 'true';
+	}else
+		echo'Failed to login. Please try again';
+		return 'false';
+	}
+
+
+  
+   
 }
 
 # DB function
 function register($username, $password, $email)
 {
 	// connect to DB
-	$mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
+	$mydb = new mysqli('127.0.0.1','niraj','password','IT490 DB');
 
 	if ($mydb->errno != 0)
 	{
@@ -130,7 +143,7 @@ function requestProcessor($request)
 	case "error":
 		return logError($request['timestamp'], $request['message'], $request['source']);
 	case "login":
-		$response = doLogin($request['username'],$request['password']);
+		$response = doLogin($request['email'],$request['password']);
 		return $response;
 	case "register":
 		return register($request['username'],$request['password'],$request['email']);

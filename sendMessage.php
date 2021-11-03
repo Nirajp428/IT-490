@@ -12,22 +12,22 @@ function sendError($message)
 }
 #sendError("Send test logging message");
 
-function sendLogin($username, $password)
+function sendLogin($email, $password)
 {
 	$_SESSION['type'] = "login";
-	$_SESSION['username'] = $username;
+	$_SESSION['email'] = $email;
 	$_SESSION['password'] = $password;
 	$response = require("testRabbitMQClient.php");
-	if ($response == "True")
+	if ($response == "true")
  	{
-        	echo "Returned True\n";
-	} elseif ($response == "False") {
-		echo "Returned False\n";
+        	echo "Returned true\n";
+	} elseif ($response == "false") {
+		echo "Returned false\n";
 	} else {
 		sendError("Call to SendLogin (sendMessage.php) did not return a valid response of True or False");
 	}
 }
-#$response = sendLogin("kevin", "password");
+$response = sendLogin("niraj", "password");
 
 function sendRequest($movie)
 {
