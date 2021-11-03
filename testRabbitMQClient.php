@@ -19,7 +19,7 @@ switch ($type) {
 		break;
 	case "login":
 		$request['type'] = $_SESSION['type'];
-		$request['username'] = $_SESSION['username'];
+		$request['email'] = $_SESSION['email'];
 		$request['password'] = $_SESSION['password'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
