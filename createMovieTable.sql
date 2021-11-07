@@ -6,7 +6,7 @@ CREATE TABLE Movies
 	rated VARCHAR(10),
 	released VARCHAR(30),
 	runtime VARCHAR(15),
-	genre VARCHAR(20),
+	genre VARCHAR(60),
 	director VARCHAR(40),
 	actors VARCHAR(100),
 	plot VARCHAR(500),
