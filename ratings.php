@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/static/css/ratings.css" type=text/css">
  <a class="social-like" >
                     <span class="like"><i 
                     class="glyphicon glyphicon-ok"></i></span>
