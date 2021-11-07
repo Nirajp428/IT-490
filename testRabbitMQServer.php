@@ -50,7 +50,7 @@ function doLogin($username,$password)
 function register($username, $password, $email)
 {
 	// connect to DB
-	$mydb = new mysqli('127.0.0.1','niraj','password','IT490 DB');
+	$mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
 
 	if ($mydb->errno != 0)
 	{
@@ -89,28 +89,56 @@ function register($username, $password, $email)
 # DB function
 function getMovie($movie)
 {
-	//code to check if $movie is already in DB
-	//If true, return the movie details to the front end
-	//If false, send the $movie to the dmz server
+	// connect to DB
+        $mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
 
-	// $result = SELECT * FROM table WHERE movieTitle == $movie;
-	$result = "False";
-	if ($result == "True") {
-		return True;
-	} elseif ($result == "False") {
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+
+	// query to check if $movie is already in DB
+	$query = "SELECT * FROM Movies WHERE title='$movie';";
+	$response = $mydb->query($query);
+
+        if ($response->num_rows == 0) {
+		// Movie not in DB, get Movie from dmz server
 		$_SESSION['type'] = 'APIrequest';
-		$_SESSION['movie'] = "$movie";
+                $_SESSION['movie'] = "$movie";
 
-		// call dmz server
-        	$response = require("testRabbitMQClient.php");
+                // call dmz server
+		$response = require("testRabbitMQClient.php");
+		$array = json_decode($response, true);
 
-		// add $response which contains results form API call to DB
-		#INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...);
+		$title = $array['Title'];
+		$year = $array['Year'];
+		$rated = $array['Rated'];
+		$released = $array['Released'];
+		$runtime = $array['Runtime'];
+		$genre = $array['Genre'];
+		$directors = $array['Director'];
+		$actors = $array['Actors'];
+		$plot = $array['Plot'];
+		$poster = $array['Poster'];
+		$imdbRating = $array['imdbRating'];
+		$type = $array['Type'];
+		$totalSeasons = $array['totalSeasons'];
 
-		// return $response to db
-		return $response;
-	} else {
-		logError(date('m-d-Y--h:i:s a'), "Boolean error in getMovie() in testRabbitMQServer.php", php_uname('n'));
+
+                // add $response which contains results form API call to DB
+                $query = "INSERT INTO Movies (title, year, rated, released, runtime, genre, director, actors, plot, poster, imdbRating, contentType, seasons) VALUES ('$title', '$year', '$rated', '$released', '$runtime', '$genre', '$directors', '$actors', '$plot', '$poster', '$imdbRating', '$type', '$totalSeasons');";
+
+                // return $api info to db
+                return $array;
+
+	} else { 
+		// movie found in DB
+		$query = "SELECT * FROM Movies WHERE title='$movie';";
+	        $response = $mydb->query($query);
+		echo $response;
 	}
 }
 
