@@ -106,12 +106,19 @@ function getMovie($movie)
 
         if ($response->num_rows == 0) {
 		// Movie not in DB, get Movie from dmz server
+		echo "$movie not found in database, calling dmz server\n";
 		$_SESSION['type'] = 'APIrequest';
                 $_SESSION['movie'] = "$movie";
 
                 // call dmz server
 		$response = require("testRabbitMQClient.php");
 		$array = json_decode($response, true);
+
+		if ($array['Title'] == NULL)
+                {
+                        echo "API does not have $movie listed";
+                        return "API does not have $movie listed";
+                }
 
 		$title = $array['Title'];
 		$year = $array['Year'];
@@ -122,23 +129,36 @@ function getMovie($movie)
 		$directors = $array['Director'];
 		$actors = $array['Actors'];
 		$plot = $array['Plot'];
+		$sqlPlot = str_replace("'", "''", "$plot");
 		$poster = $array['Poster'];
 		$imdbRating = $array['imdbRating'];
 		$type = $array['Type'];
 		$totalSeasons = $array['totalSeasons'];
 
-
                 // add $response which contains results form API call to DB
-                $query = "INSERT INTO Movies (title, year, rated, released, runtime, genre, director, actors, plot, poster, imdbRating, contentType, seasons) VALUES ('$title', '$year', '$rated', '$released', '$runtime', '$genre', '$directors', '$actors', '$plot', '$poster', '$imdbRating', '$type', '$totalSeasons');";
+                $query = "INSERT INTO Movies (title, year, rated, released, runtime, genre, director, actors, plot, poster, imdbRating, contentType, seasons) VALUES ('$title', '$year', '$rated', '$released', '$runtime', '$genre', '$directors', '$actors', '$sqlPlot', '$poster', '$imdbRating', '$type', '$totalSeasons');";
+		
+		if ($mydb->query($query) === TRUE) {
+			echo "New record created successfully";
+		} else {
+			echo "Error: " . $query . "<br>" . $mydb->error;
+		}
+		// return $api info to db
+		$query = "SELECT * FROM  Movies WHERE title='$movie';";
+                $result = mysqli_query($mydb, $query);
+                $row = mysqli_fetch_assoc($result);
 
-                // return $api info to db
-                return $array;
+                // return movie info to front end
+                return $row;
 
 	} else { 
 		// movie found in DB
-		$query = "SELECT * FROM Movies WHERE title='$movie';";
-	        $response = $mydb->query($query);
-		echo $response;
+		$query = "SELECT * FROM  Movies WHERE title='$movie';";
+		$result = mysqli_query($mydb, $query);
+		$row = mysqli_fetch_assoc($result);
+
+                // return movie info to front end
+		return $row;
 	}
 }
 
@@ -148,7 +168,7 @@ function APICall($movie)
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "https://www.omdbapi.com/?t=$movie&apikey=a7bdaf57");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	$contents = curl_exec($ch);
+$contents = curl_exec($ch);
 	return $contents;
 }
 

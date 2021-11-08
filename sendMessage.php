@@ -45,7 +45,7 @@ function sendRequest($movie)
         }
 }
 #$response = sendRequest("marvel");
-$response = sendRequest("game+of+thrones");
+$response = sendRequest("game of thrones");
 
 function register($username, $password, $email)
 {
