@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 <link rel="stylesheet" href="/static/css/ratings.css" type=text/css">
+=======
+<link rel="stylesheet" href="/static/css/ratings.css" type="text/css">
+>>>>>>> Stashed changes
  <a class="social-like" >
                     <span class="like"><i 
                     class="glyphicon glyphicon-ok"></i></span>

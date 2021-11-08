@@ -10,7 +10,7 @@ require_once(__DIR__ . "/../lib/helpers.php");
         <li><a href="login.php">Login</a></li>
 	<li><a href="register.php">Register</a></li>
 	<li><a href="">Movie Information</a></li>
-	<li><a href="https://watchparty.me"</a></li>
+	<li><a href="https://watchparty.me">WatchParty</a></li>
     <?php endif; ?>
 
  <?php if (has_role("Admin")): ?>
