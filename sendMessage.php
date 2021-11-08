@@ -31,21 +31,31 @@ $response = sendLogin("niraj", "password");
 
 function sendRequest($movie)
 {
-	$_SESSION['type'] = 'request';
-	$_SESSION['movie'] = "$movie";
-	$response = require("testRabbitMQClient.php");
-	if ($response == "True")
-        {
-                echo "Returned True\n";
-        } elseif ($response == "False") {
-                echo "Returned False\n";
-        } else {
-                echo $response;
-                echo "\n";
-        }
+        $_SESSION['type'] = 'request';
+        $_SESSION['movie'] = "$movie";
+        $response = require("testRabbitMQClient.php");
+        echo $response['title'] . "\n";
+        echo $response['year'] . "\n";
+        echo $response['rated'] . "\n";
+        echo $response['released'] . "\n";
+        echo $response['runtime'] . "\n";
+        echo $response['genre'] . "\n";
+        echo $response['director'] . "\n";
+        echo $response['actors'] . "\n";
+        echo $response['plot'] . "\n";
 }
 #$response = sendRequest("marvel");
-$response = sendRequest("game of thrones");
+$response = sendRequest("belfast");
+
+function friend_request($id, $friend_username)
+{
+	$_SESSION['type'] = "friend_request";
+	$_SESSION['id'] = $id;
+	$_SESSION['friendUsername'] = $friend_username;
+        $response = require('testRabbitMQClient.php');
+        echo $response;
+}
+
 
 function register($username, $password, $email)
 {
