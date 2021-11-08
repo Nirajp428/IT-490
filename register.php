@@ -1,4 +1,11 @@
-<?php require_once(__DIR__ . "/partials/nav.php"); ?>
+<?php
+require_once(__DIR__ . "/partials/nav.php");
+require_once('sendMessage.php');
+//require_once('path.inc');
+//require_once('get_host_info.inc');
+//require_once('testRabbitMQClient.php');
+//require_once('rabbitMQLib');
+?>
 
 <?php
 if (isset($_POST["register"])) {
@@ -21,8 +28,7 @@ if (isset($_POST["register"])) {
     $isValid = true;
     //check if passwords match on the server side
     if ($password == $confirm) {
-        //not necessary to show
-        //echo "Passwords match <br>";
+    //not necessary to show
     }
     else {
         flash("Passwords don't match");
@@ -31,31 +37,15 @@ if (isset($_POST["register"])) {
     if (!isset($email) || !isset($password) || !isset($confirm)) {
         $isValid = false;
     }
-    //TODO other validation as desired, remember this is the last line of defense
+    //password hashed and salted with bcrypt
+    //no two passwords will ever have the same hash
     if ($isValid) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
-	$db = getDB();
-        if (isset($db)) {
-            //here we'll use placeholders to let PDO map and sanitize our data
-            $stmt = $db->prepare("INSERT INTO Users(email, username, password) VALUES(:email,:username, :password)");
-            //here's the data map for the parameter to data
-            $params = array(":email" => $email, ":username" => $username, ":password" => $hash);
-            $r = $stmt->execute($params);
-            $e = $stmt->errorInfo();
-            if ($e[0] == "00000") {
-		flash("Successfully registered! Please login.");
-            }
-            else {
-                if ($e[0] == "23000") {//code for duplicate entry
-                    flash("Username or email already exists.");
-                }
-                else {
-                    flash("An error occurred, please try again");
-                }
-            }
-        }
+	//here we send the registration info through rabbit to db
+	register($username, $hash, $email);
     }
+
     else {
         flash( "There was a validation issue");
     }
@@ -79,4 +69,4 @@ if (!isset($username)) {
         <input type="password" id="p2" name="confirm" required/>
         <input type="submit" name="register" value="Register"/>
     </form>
-<?php require(__DIR__ . "/partials/flash.php");
+<?php require(__DIR__ . "/partials/flash.php");?>

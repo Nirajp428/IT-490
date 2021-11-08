@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,3 +61,20 @@
     })
 </script>
 </html>
+=======
+<<<<<<< Updated upstream
+<link rel="stylesheet" href="/static/css/ratings.css" type=text/css">
+=======
+<link rel="stylesheet" href="/static/css/ratings.css" type="text/css">
+>>>>>>> Stashed changes
+ <a class="social-like" >
+                    <span class="like"><i 
+                    class="glyphicon glyphicon-ok"></i></span>
+                    <span class="count" >0</span>
+                </a>
+                &nbsp;
+                <a class="social-dislike" >
+                    <span class="dislike" >0</span>
+                    <span class="like"><i class="glyphicon glyphicon-remove"></i></span>
+                </a>
+>>>>>>> cd90a4316ab6cc6816202725419006bacd1c1bd7
