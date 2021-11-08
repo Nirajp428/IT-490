@@ -47,6 +47,16 @@ function sendRequest($movie)
 #$response = sendRequest("marvel");
 $response = sendRequest("game+of+thrones");
 
+function friend_request($id, $friend_username)
+{
+	$_SESSION['type'] = "friend_request";
+	$_SESSION['id'] = $id;
+	$_SESSION['friendUsername'] = $friend_username;
+        $response = require('testRabbitMQClient.php');
+        echo $response;
+}
+
+
 function register($username, $password, $email)
 {
 	$_SESSION['type'] = "register";

@@ -44,7 +44,15 @@ switch ($type) {
 		$request['type'] = $_SESSION['type'];
 		$request['sessionID'] = $_SESSION['sessionID'];
                 $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		break;
+
+	case "friend_request":
+                $request['type'] = $_SESSION['type'];
+		$request['id'] = $_SESSION['id'];
+		$request['friendUsername'] = $_SESSION['friendUsername'];
+                $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
                 break;
+
 }
 
 $response = $client->send_request($request);
