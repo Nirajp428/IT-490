@@ -5,34 +5,23 @@ class Reactions {
   private $stmt;
   public $error;
   function __construct () {
-    try {
-      $this->pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET,
-        DB_USER, DB_PASSWORD, [
-          PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_NAMED
-        ]
-      );
-    } catch (Exception $ex) { exit($ex->getMessage()); }
+    $mydb = new mysqli('127.0.0.1', 'niraj', 'password', 'IT490db');
+ 
   }
 
-  // (B) DESTRUCTOR - CLOSE DATABASE CONNECTION
-  function __destruct () {
-    $this->pdo = null;
-    $this->stmt = null;
-  }
+ 
 
   // (C) GET REACTIONS FOR ID
   function get ($id, $uid=null) {
     // (C1) GET TOTAL REACTIONS
     $results = ["react" => [0, 0]]; // [LIKES, DISLIKES]
-    $this->stmt = $this->pdo->prepare(
+    $query =(
       "SELECT `reaction`, COUNT(`reaction`) `total`
       FROM `reactions` WHERE `id`=?
       GROUP BY `reaction`"
     );
-    $this->stmt->execute([$id]);
-    while ($row = $this->stmt->fetch()) {
+    $result = $mydb->query($query);
+    while ($row = mysqli_fetch_assoc($result); {
       if ($row["reaction"]==1) { $results["react"][0] = $row["total"]; }
       else { $results["react"][1] = $row["total"]; }
     }
@@ -67,16 +56,10 @@ class Reactions {
     } catch (Exception $ex) {
       $this->error = $ex->getMessage();
       return false;
+    $mydb->close();
     }
   }
 }
-
-// (E) DATABASE SETTINGS - CHANGE TO YOUR OWN!
-define("DB_HOST", "localhost");
-define("DB_NAME", "test");
-define("DB_CHARSET", "utf8");
-define("DB_USER", "root");
-define("DB_PASSWORD", "");
 
 // (F) CREATE NEW CONTENT OBJECT
 $_REACT = new Reactions();
