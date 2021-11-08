@@ -31,17 +31,7 @@ if (isset($_POST["login"])) {
         flash("Invalid email");
     }
     if ($isValid) {
-	  $response = sendLogin($email, $password);
-  
-	  if($response == false){
-		flash("invalid Credentials");
-		}
-
-	if($response["email"] = $email){
-		flash("Login Successful");
-		$_SESSION["user"] = $response;
-		die(header("Location: home.php"));	
-	}
+        $response = sendLogin($email, $password);
     }
 }
 ?>
