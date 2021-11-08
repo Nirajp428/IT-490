@@ -31,7 +31,7 @@ function validateSession($sessionID)
 function doLogin($username,$password)
 {
     // connect to DB
-	$mydb = new mysqli('127.0.0.1','niraj','password','IT490 DB');
+	$mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
 	
 	// look if email and password hashes are in db
 	$query = "SELECT * FROM Users WHERE email='$email' AND password='$password'";	
