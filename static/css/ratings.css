@@ -1,0 +1,65 @@
+body {
+    margin: 10px;
+}
+
+.social-like, .social-dislike {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    /*width: 48%;*/
+    background-color: #A084A5;
+    color: #fff;
+    cursor: pointer;
+    display:inline-block;
+    
+}
+
+.social-like:hover, .social-dislike:hover {
+  text-decoration:none;
+  color:black;
+}
+
+.social-like:active{
+ background-color: #00FF27;
+} 
+
+.social-dislike:active {
+  background-color: #F12B00;
+}
+
+.social-like:active .count{
+ background-color: #00FF27;
+}
+
+.social-dislike:active .dislike {
+  background-color: #F12B00;
+}
+
+
+.social-like {
+    border-top-left-radius: 5px;
+}
+
+.social-dislike {
+  margin-left: 20px;
+    border-top-right-radius: 5px;
+}
+
+.count, .like, .dislike {
+    padding:15px;
+}
+
+.count, .dislike {
+  display:inline;
+    background-color: #A084A5;
+    border-radius: 50%;
+    font-size:12px;
+}
+
+.dislike {
+    margin-left: -10px;
+}
+
+.count {
+    margin-right: -10px;
+}
