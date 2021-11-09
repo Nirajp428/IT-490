@@ -16,7 +16,15 @@ function sendLogin($email, $password)
 	$_SESSION['email'] = $email;
 	$_SESSION['password'] = $password;
 	$response = require("testRabbitMQClient.php");
-	echo $response['id'];
+	 if($response == false){
+                flash("Invalid Credentials");
+                }
+
+          else{
+                $_SESSION["user"] = $response;
+                flash("Login Successful");
+                die(header("Location: home.php"));      
+          } 
 
 //if ($response == "true")
  //	{
