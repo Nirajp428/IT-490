@@ -1,9 +1,7 @@
 CREATE TABLE user_friends(
-        id int auto_increment,
-        user_id int,
-        friend_id int,
-	added boolean,
-        primary key (`id`),
-        foreign key (`user_id`) REFERENCES Users(`id`)
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_one` int(11) NOT NULL,
+  `user_two` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 )
 
