@@ -27,6 +27,88 @@ function validateSession($sessionID)
 	// return false if not, redirect user to login page
 }
 
+function doLogin($email, $password)
+{
+     $mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
+
+     if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php register function", php_uname('n'));
+                exit(0);
+     }
+
+       if (isset($mydb)){
+	       $query = ("SELECT id, email, username, password from Users WHERE '$email' = email LIMIT 1");
+		$result = $mydb->query($query);
+	       $row = mysqli_fetch_assoc($result);
+
+	   if ($row && isset($row["password"])){
+		$dbPassHash = $row["password"];
+		if (password_verify($password, $dbPassHash)){
+			unset($row["password"]);
+			echo json_encode($row);
+			$mydb->close();
+			return $row;
+		}
+		else{
+			return "False";
+			echo "Invalid Password";
+		}
+	    }
+	    else{
+		return "False";
+		echo "Invalid User";
+            }
+	   }
+}
+
+# DB function
+function register($username, $password, $email)
+{
+	// connect to DB
+	$mydb = new mysqli('127.0.0.1','kevin','password','IT490db');
+
+	if ($mydb->errno != 0)
+	{
+		echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+		logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php register function", php_uname('n'));
+        	exit(0);
+	}
+	echo "successfully connected to database".PHP_EOL;
+
+
+	// check if user exists
+	$query = "SELECT * FROM Users WHERE email='$email'";
+	$response = $mydb->query($query);
+	if(!$response->num_rows == 0) {
+		echo "Email is already in use, please register with a different email";
+		$mydb->close();
+		return "False";
+	} else {
+		// If user not found, insert into DB
+		$query = ("INSERT INTO Users(email, password, username) VALUES ('$email', '$password', '$username')");
+
+		if ($mydb->query($query) == TRUE){	
+			echo "Successfully registered";
+			$mydb->close();
+			return "True";
+		}			
+		else {
+			echo "Error";
+		}
+	}
+
+	if ($mydb->errno != 0)
+	{
+        	echo "failed to execute query:".PHP_EOL;
+		echo __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		logError(date('m-d-Y--h:i:s a'), "Failed to execute register query in testRabbitMQServer.php", php_uname('n'));
+		exit(0);
+	}
+}
+
+/*
 # DB function
 function doLogin($username,$password)
 {
@@ -45,7 +127,8 @@ function doLogin($username,$password)
 		return 'false';
 	}
 }
-
+ */
+/*
 # DB function
 function register($username, $password, $email)
 {
@@ -68,13 +151,15 @@ function register($username, $password, $email)
 	if ($response->num_rows == 0) {
 		// User not found, insert into DB
                 $query = "INSERT INTO Users (email, password) VALUES ('$email', '$password');";
-                echo "Successfully registered";
+		echo "Successfully registered";
+		$mydb->close();
                 return "True";
 
 	} else {
 		// Email already in DB, try again
 		echo "Email is already in use, please register with a different email";
-                return "False";
+		$mydb->close();
+		return "False";
 	}
 
 	if ($mydb->errno != 0)
@@ -85,6 +170,7 @@ function register($username, $password, $email)
 		exit(0);
 	}
 }
+ */
 
 # DB function
 function getMovie($movie)
@@ -116,7 +202,8 @@ function getMovie($movie)
 
 		if ($array['Title'] == NULL)
                 {
-                        echo "API does not have $movie listed";
+			echo "API does not have $movie listed";
+			$mydb->close();
                         return "API does not have $movie listed";
                 }
 
@@ -143,12 +230,13 @@ function getMovie($movie)
 		} else {
 			echo "Error: " . $query . "<br>" . $mydb->error;
 		}
-		// return $api info to db
+		// return $api info to front end
 		$query = "SELECT * FROM  Movies WHERE title='$movie';";
                 $result = mysqli_query($mydb, $query);
                 $row = mysqli_fetch_assoc($result);
 
-                // return movie info to front end
+		// return movie info to front end
+		$mydb->close();
                 return $row;
 
 	} else { 
@@ -158,6 +246,7 @@ function getMovie($movie)
 		$row = mysqli_fetch_assoc($result);
 
                 // return movie info to front end
+		$mydb->close();
 		return $row;
 	}
 }
