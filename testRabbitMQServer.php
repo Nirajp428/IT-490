@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-session_start();
+if (!isset($_SESSION)) { session_start(); }
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
@@ -128,26 +128,79 @@ function dbConnection(){
 # DB function
 function getMovie($movie)
 {
-	//code to check if $movie is already in DB
-	//If true, return the movie details to the front end
-	//If false, send the $movie to the dmz server
+	// connect to DB
+        $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
 
-	// $result = SELECT * FROM table WHERE movieTitle == $movie;
-	$result = "False";
-	if ($result == "True") {
-		return True;
-	} elseif ($result == "False") {
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+
+	// query to check if $movie is already in DB
+	$query = "SELECT * FROM Movies WHERE title='$movie';";
+	$response = $mydb->query($query);
+
+        if ($response->num_rows == 0) {
+		// Movie not in DB, get Movie from dmz server
+		echo "$movie not found in database, calling dmz server\n";
 		$_SESSION['type'] = 'APIrequest';
-		$_SESSION['movie'] = "$movie";
-        	$response = require("testRabbitMQClient.php");
+                $_SESSION['movie'] = "$movie";
 
-		// add $response which contains results form API call to DB
-		#INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...);
+                // call dmz server
+		$response = require("testRabbitMQClient.php");
+		$array = json_decode($response, true);
 
-		// return $response to front end
-		return $response;
-	} else {
-		logError(date('m-d-Y--h:i:s a'), "Boolean error in getMovie() in testRabbitMQServer.php", php_uname('n'));
+		if ($array['Title'] == NULL)
+                {
+			echo "API does not have $movie listed";
+			$mydb->close();
+                        return "API does not have $movie listed";
+                }
+
+		$title = $array['Title'];
+		$year = $array['Year'];
+		$rated = $array['Rated'];
+		$released = $array['Released'];
+		$runtime = $array['Runtime'];
+		$genre = $array['Genre'];
+		$directors = $array['Director'];
+		$actors = $array['Actors'];
+		$plot = $array['Plot'];
+		$sqlPlot = str_replace("'", "''", "$plot");
+		$poster = $array['Poster'];
+		$imdbRating = $array['imdbRating'];
+		$type = $array['Type'];
+		$totalSeasons = $array['totalSeasons'];
+
+                // add $response which contains results form API call to DB
+                $query = "INSERT INTO Movies (title, year, rated, released, runtime, genre, director, actors, plot, poster, imdbRating, contentType, seasons) VALUES ('$title', '$year', '$rated', '$released', '$runtime', '$genre', '$directors', '$actors', '$sqlPlot', '$poster', '$imdbRating', '$type', '$totalSeasons');";
+		
+		if ($mydb->query($query) === TRUE) {
+			echo "New record created successfully";
+		} else {
+			echo "Error: " . $query . "<br>" . $mydb->error;
+		}
+		// return $api info to front end
+		$query = "SELECT * FROM  Movies WHERE title='$movie';";
+                $result = mysqli_query($mydb, $query);
+                $row = mysqli_fetch_assoc($result);
+
+		// return movie info to front end
+		$mydb->close();
+                return $row;
+
+	} else { 
+		// movie found in DB
+		$query = "SELECT * FROM  Movies WHERE title='$movie';";
+		$result = mysqli_query($mydb, $query);
+		$row = mysqli_fetch_assoc($result);
+
+                // return movie info to front end
+		$mydb->close();
+		return $row;
 	}
 }
 
