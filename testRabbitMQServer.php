@@ -245,7 +245,7 @@ function requestProcessor($request)
 }
 
 # $server only cares about the queue its assigned in the testRabbitMQ.ini file. 
-$server = new rabbitMQServer("testRabbitMQ.ini","dbServer");
+$server = new rabbitMQServer("RabbitMQDev.ini","backEndServer");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');

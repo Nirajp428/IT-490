@@ -52,3 +52,12 @@ sudo rabbitmqctl set_permissions -p IT490vhost IT490User ".*" ".*" ".*"
 
 ./rabbitmqadmin --vhost="IT490vhost" declare binding source="logexchange" destination_type="queue" destination="deployqueue" routing_key="*" -u IT490User -p password
 
+
+# set Alternate Exchange Policy for Production Failover
+#sudo rabbitmqctl set_policy AE "^frontendexchange$" '{"alternate-exchange":"aefrontendexchange"}'
+
+#sudo rabbitmqctl set_policy AE "^backendendexchange$" '{"alternate-exchange":"aebackendendexchange"}'
+
+#sudo rabbitmqctl set_policy AE "^dmzexchange$" '{"alternate-exchange":"aedmzexchange"}'
+
+
