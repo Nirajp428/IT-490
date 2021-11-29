@@ -1,0 +1,28 @@
+{
+  "name": "IT-490",
+  "version": "1.0.0",
+  "description": "IT 490 Project with Matt, Kevin, Chirag, and Matrik",
+  "main": "ratings.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nirajp428/IT-490.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nirajp428/IT-490/issues"
+  },
+  "homepage": "https://github.com/Nirajp428/IT-490#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}

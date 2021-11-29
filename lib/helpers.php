@@ -1,22 +1,10 @@
 <?php
 session_start();//we can start our session here so we don't need to worry about it on other pages
-require_once(__DIR__ . "/db.php");
 //this file will contain any helpful functions we create
-//I have provided two for you
 function is_logged_in() {
     return isset($_SESSION["user"]);
 }
 
-function has_role($role) {
-    if (is_logged_in() && isset($_SESSION["user"]["roles"])) {
-        foreach ($_SESSION["user"]["roles"] as $r) {
-            if ($r["name"] == $role) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 function get_username() {
     if (is_logged_in() && isset($_SESSION["user"]["username"])) {
@@ -66,21 +54,6 @@ function getMessages() {
         return $flashes;
     }
     return array();
-}
-function getPoints() {
-    $id = get_user_id();
-$result = [];
-if(isset($id)) {
-    $db = getDB();
-    $stmt = $db->prepare("SELECT points FROM Users WHERE id = $id");
-    $r = $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$result) {
-        $e = $stmt->errorInfo();
-        flash($e[2]);
-    }
-}
-   return ($result["points"]);
 }
 //end flash
 ?>
