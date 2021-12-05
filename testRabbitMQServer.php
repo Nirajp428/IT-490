@@ -5,12 +5,14 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+
+// Logs errors to 4 VM's
 function logError($timestamp, $message, $source)
 {
 	$currentUser = get_current_user();
 
 	#append function paramaters to log file
-	$logfile = fopen("/home/$currentUser/Desktop/logfile.txt", "a") or die("Unable to open file!");
+	$logfile = fopen("/home/$currentUser/Desktop/logfile.txt", "a") or die("Unable to open log file!");
 	
 	fwrite($logfile, "$timestamp\t$source\t$message\n");
 	fclose($logfile);
@@ -25,7 +27,6 @@ function validateSession($sessionID)
 	// return false if not, redirect user to login page
 }
 
-# DB function
 function doLogin($email, $password)
 {
      $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
@@ -51,13 +52,18 @@ function doLogin($email, $password)
 			$mydb->close();
 		}
 		else{
-			return "False";
 			echo "Invalid Password";
+			$response = false;
+			echo $response;
+			return $response;
+			$mydb->close();
 		}
 	    }
 	    else{
-		return "False";
-		echo "Invalid User";
+		echo "invalid user";
+		$response = false;
+		return $response;
+		$mydb->close();
             }
 	   }
 }
@@ -82,6 +88,7 @@ function register($username, $password, $email)
 	$response = $mydb->query($query);
 	if(!$response->num_rows == 0) {
 		echo "Email is already in use, please register with a different email";
+		$mydb->close();
 		return "False";
 	} else {
 		// If user not found, insert into DB
@@ -89,8 +96,8 @@ function register($username, $password, $email)
 
 		if ($mydb->query($query) == TRUE){	
 			echo "Successfully registered";
-			return "True";
 			$mydb->close();
+			return "True";
 		}			
 		else {
 			echo "Error";
@@ -106,24 +113,28 @@ function register($username, $password, $email)
 	}
 }
 
-#DB function connection to friend request database 
-function dbConnection(){
-         $db_host = "localhost";
-         $db_name = "frnd_req_system";
-         $db_username = "root";
-         $db_password = "";
-         
-         $dsn_db = 'mysql:host='.$db_host.';dbname='.$db_name.';charset=utf8';
-         try{
-            $site_db = new PDO($dsn_db, $db_username, $db_password);
-            $site_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $site_db;
+function getAllMovies()
+{
+	$mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
+	if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php register function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+	
+	$query = ("SELECT * FROM Movies ORDER BY CASE WHEN `imdbRating` = 'N/A' THEN 1 ELSE 0 END, `imdbRating` desc");
+	$result = $mydb->query($query);
 
-         }catch (PDOException $e){
-            echo $e->getMessage();
-            exit;
-       }
-} 
+	$arr = array();
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+		$arr[] = $row;
+	}
+
+	$all = json_encode($arr);
+	return $all;
+}
 
 # DB function
 function getMovie($movie)
@@ -140,7 +151,7 @@ function getMovie($movie)
         echo "successfully connected to database".PHP_EOL;
 
 	// query to check if $movie is already in DB
-	$query = "SELECT * FROM Movies WHERE title='$movie';";
+	$query = "SELECT * FROM `Movies` WHERE `title` LIKE '%$movie%' ORDER BY `movieID` DESC LIMIT 1";
 	$response = $mydb->query($query);
 
         if ($response->num_rows == 0) {
@@ -153,7 +164,7 @@ function getMovie($movie)
 		$response = require("testRabbitMQClient.php");
 		$array = json_decode($response, true);
 
-		if ($array['Title'] == NULL)
+		if (!isset($array['Title']))
                 {
 			echo "API does not have $movie listed";
 			$mydb->close();
@@ -167,16 +178,23 @@ function getMovie($movie)
 		$runtime = $array['Runtime'];
 		$genre = $array['Genre'];
 		$directors = $array['Director'];
+		$directorsNew = str_replace("'", "''", "$directors");
 		$actors = $array['Actors'];
+		$actorsNew = str_replace("'", "''", "$actors");
 		$plot = $array['Plot'];
 		$sqlPlot = str_replace("'", "''", "$plot");
 		$poster = $array['Poster'];
 		$imdbRating = $array['imdbRating'];
 		$type = $array['Type'];
-		$totalSeasons = $array['totalSeasons'];
+		if(isset($array['totalSeasons'])){
+			$totalSeasons = $array['totalSeasons'];
+		}
+		else{
+			$totalSeasoons = NULL;
+		}
 
                 // add $response which contains results form API call to DB
-                $query = "INSERT INTO Movies (title, year, rated, released, runtime, genre, director, actors, plot, poster, imdbRating, contentType, seasons) VALUES ('$title', '$year', '$rated', '$released', '$runtime', '$genre', '$directors', '$actors', '$sqlPlot', '$poster', '$imdbRating', '$type', '$totalSeasons');";
+                $query = "INSERT INTO Movies (title, year, rated, released, runtime, genre, director, actors, plot, poster, imdbRating, contentType, seasons) VALUES ('$title', '$year', '$rated', '$released', '$runtime', '$genre', '$directorsNew', '$actorsNew', '$sqlPlot', '$poster', '$imdbRating', '$type', '$totalSeasons');";
 		
 		if ($mydb->query($query) === TRUE) {
 			echo "New record created successfully";
@@ -190,7 +208,12 @@ function getMovie($movie)
 
 		// return movie info to front end
 		$mydb->close();
-                return $row;
+		return $row;
+
+		//restart server file after API call
+	//	$_ = $_SERVER['_'];
+	//	global $_;
+	//	pcntl_exec($_);
 
 	} else { 
 		// movie found in DB
@@ -204,12 +227,13 @@ function getMovie($movie)
 	}
 }
 
+// DMZ function
 function APICall($movie)
 {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "https://www.omdbapi.com/?t=$movie&apikey=a7bdaf57");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	$contents = curl_exec($ch);
+$contents = curl_exec($ch);
 	return $contents;
 }
 
@@ -237,7 +261,10 @@ function requestProcessor($request)
 		return $response;
 	case "APIrequest":
 		$response = APICall($request['movie']);
-                return $response;
+		return $response;
+	case "getAll":
+		$response = getAllMovies();
+		return $response;
 	case "validate_session":
 		return validateSession($request['sessionId']);
   }
@@ -245,12 +272,11 @@ function requestProcessor($request)
 }
 
 # $server only cares about the queue its assigned in the testRabbitMQ.ini file. 
-$server = new rabbitMQServer("RabbitMQDev.ini","backEndServer");
+$server = new rabbitMQServer("testRabbitMQ.ini","logExchangeServer");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END".PHP_EOL;
+
+
 exit();
-?>
-
-
