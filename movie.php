@@ -17,9 +17,34 @@ width: 250px;
     font-size: 18px
 }
 </style>
+
+ <?php>
+ function likeRequest()
+        {
+            var form=document.getElementById('myForm');
+            form.action='likeRequestDB.php';
+            form.method='post';
+            form.submit();
+        }
+ function dislikeRequest()
+        {
+            form=document.getElementById('myForm');
+            form.action='dislikeRequestDB.php';
+            form.method='post';
+            form.submit();
+        }
+        ?>
+        
 <br>
 <button type="button" class = "back" onclick="history.go(-1);">Back To Movies </button>
-<br>
+
+<form id="myForm" method="post">
+<input type="text" id="txtMovieId" name= "txtMovieID" placeholder= "Movie Id" readonly="true">
+<input type="text" id="txtUserId" name="txtUserId" placeholder="user Id">
+<button type="button" name="btnLike" id="btnLike" style="background:lightblue"  onclick="likeRequest()">Like</button>
+
+<button type="button" name="btnDislike" id="btnDislike" style="background:lightblue"  onclick="dislikeRequest()">Dislike</button><br>
+
 <br>
 
 <?php
@@ -58,6 +83,9 @@ echo ("Type: ". $contentType . "<br>");
 if(isset($seasons)){
 	echo ("Seasons: ". $seasons);
 }
+
+
+
 ?>
 <?php require(__DIR__ . "/partials/flash.php");?>
 
