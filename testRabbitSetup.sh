@@ -6,10 +6,10 @@ sudo rabbitmqctl set_user_tags IT490User administrator
 sudo rabbitmqctl set_permissions -p / IT490User ".*" ".*" ".*"
 
 
-
 # add vhost and set permissions
 sudo rabbitmqctl add_vhost IT490vhost
 sudo rabbitmqctl set_permissions -p IT490vhost IT490User ".*" ".*" ".*"
+
 
 # create exchanges
 ./rabbitmqadmin declare exchange --vhost=IT490vhost name=frontendexchange type=direct durable=true -u IT490User -p password
@@ -23,6 +23,13 @@ sudo rabbitmqctl set_permissions -p IT490vhost IT490User ".*" ".*" ".*"
 ./rabbitmqadmin declare exchange --vhost=IT490vhost name=logexchange type=direct durable=true -u IT490User -p password
 
 
+# create dead letter exchanges
+./rabbitmqadmin declare exchange --vhost=IT490vhost name=dlxfrontendexchange type=direct durable=true -u IT490User -p password
+
+./rabbitmqadmin declare exchange --vhost=IT490vhost name=dlxbackendexchange type=direct durable=true -u IT490User -p password
+
+./rabbitmqadmin declare exchange --vhost=IT490vhost name=dlxdmzexchange type=direct durable=true -u IT490User -p password
+
 # create queues
 ./rabbitmqadmin declare queue --vhost=IT490vhost name=frontendqueue durable=true -u IT490User -p password
 
@@ -31,6 +38,13 @@ sudo rabbitmqctl set_permissions -p IT490vhost IT490User ".*" ".*" ".*"
 ./rabbitmqadmin declare queue --vhost=IT490vhost name=dmzqueue durable=true -u IT490User -p password
 
 ./rabbitmqadmin declare queue --vhost=IT490vhost name=deployqueue durable=true -u IT490User -p password
+
+# create dead letter queues
+./rabbitmqadmin declare queue --vhost=IT490vhost name=dlxfrontendqueue durable=true -u IT490User -p password
+
+./rabbitmqadmin declare queue --vhost=IT490vhost name=dlxbackendqueue durable=true -u IT490User -p password
+
+./rabbitmqadmin declare queue --vhost=IT490vhost name=dlxdmzqueue durable=true -u IT490User -p password
 
 
 # bind exchanges and queues
@@ -53,11 +67,18 @@ sudo rabbitmqctl set_permissions -p IT490vhost IT490User ".*" ".*" ".*"
 ./rabbitmqadmin --vhost="IT490vhost" declare binding source="logexchange" destination_type="queue" destination="deployqueue" routing_key="*" -u IT490User -p password
 
 
-# set Alternate Exchange Policy for Production Failover
-#sudo rabbitmqctl set_policy AE "^frontendexchange$" '{"alternate-exchange":"aefrontendexchange"}'
+# bind dead letter exchanges
+./rabbitmqadmin --vhost="IT490vhost" declare binding source="dlxfrontendexchange" destination_type="queue" destination="dlxfrontendqueue" routing_key="*" -u IT490User -p password
 
-#sudo rabbitmqctl set_policy AE "^backendendexchange$" '{"alternate-exchange":"aebackendendexchange"}'
+./rabbitmqadmin --vhost="IT490vhost" declare binding source="dlxbackendexchange" destination_type="queue" destination="dlxbackendqueue" routing_key="*" -u IT490User -p password
 
-#sudo rabbitmqctl set_policy AE "^dmzexchange$" '{"alternate-exchange":"aedmzexchange"}'
+./rabbitmqadmin --vhost="IT490vhost" declare binding source="dlxdmzexchange" destination_type="queue" destination="dlxdmzqueue" routing_key="*" -u IT490User -p password
 
 
+# set Time to Live policy for dead letter queues
+./rabbitmqadmin --vhost="IT490vhost" declare policy name="frontendDLX" pattern="^frontendqueue$" apply-to="queues" definition='{"dead-letter-exchange":"dlxfrontendexchange", "message-ttl":4000, "dead-letter-routing-key": "*"}'
+
+./rabbitmqadmin --vhost="IT490vhost" declare policy name="backendDLX" pattern="^backendqueue$" apply-to="queues" definition='{"dead-letter-exchange":"dlxbackendexchange", "message-ttl":4000, "dead-letter-routing-key": "*"}'
+
+./rabbitmqadmin --vhost="IT490vhost" declare policy name="dmzDLX" pattern="^dmzqueue$" apply-to="queues" definition='{"dead-letter-exchange":"dlxdmzexchange", "message-ttl":4000, "dead-letter-routing-key": "*"}'
+                              
