@@ -48,6 +48,20 @@ switch ($type) {
 		$request['type'] = $_SESSION['type'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
+	case "friendRequest":
+		$request['type'] = $_SESSION['type'];
+		$request['userid'] = $_SESSION['user']['id'];
+		$request['friend'] = $_SESSION['friend'];
+	        $request['status'] = $_SESSION['status'];
+		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		break;
+	case "like":
+		$request['type'] = $_SESSION['type'];
+		$request['userid'] = $_SESSION['userid'];
+		$request['movieid'] = $_SESSION['movieid'];
+		$request['isLike'] = $_SESSION['isLike'];
+	        $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		break;
 }
 
 $response = $client->send_request($request);

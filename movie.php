@@ -1,4 +1,5 @@
-<?php require_once(__DIR__ . "/partials/nav.php");?>
+<?php require_once(__DIR__ . "/partials/nav.php");
+?>
 <body style = "background-color:DBE9F4;"</body>
 <style>
 img{
@@ -17,38 +18,39 @@ width: 250px;
     font-size: 18px
 }
 </style>
-
- <?php>
- function likeRequest()
-        {
-            var form=document.getElementById('myForm');
-            form.action='likeRequestDB.php';
-            form.method='post';
-            form.submit();
-        }
- function dislikeRequest()
-        {
-            form=document.getElementById('myForm');
-            form.action='dislikeRequestDB.php';
-            form.method='post';
-            form.submit();
-        }
-        ?>
-        
 <br>
 <button type="button" class = "back" onclick="history.go(-1);">Back To Movies </button>
-
-<form id="myForm" method="post">
-<input type="text" id="txtMovieId" name= "txtMovieID" placeholder= "Movie Id" readonly="true">
-<input type="text" id="txtUserId" name="txtUserId" placeholder="user Id">
-<button type="button" name="btnLike" id="btnLike" style="background:lightblue"  onclick="likeRequest()">Like</button>
-
-<button type="button" name="btnDislike" id="btnDislike" style="background:lightblue"  onclick="dislikeRequest()">Dislike</button><br>
-
+<br>
 <br>
 
+<form method="post">
+<input type="submit" name = "Like" class = "back"  value = "Like"/>
+<input type="submit" name = "Dislike" class = "back" value = "Dislike"/>
+</form>
+
 <?php
+
+function like($userid, $movieid, $isLike)
+{
+        $_SESSION['type'] = "like";
+        $_SESSION['userid'] = $userid;
+        $_SESSION['movieid'] = $movieid;
+        $_SESSION['isLike'] = $isLike;
+        $response = require('testRabbitMQClient.php');
+       /* if ($response == "true"){
+                flash( "Movie Liked");
+	}
+	else{
+		flash ("Movie dislike");
+	} */
+}
+
+$like = "1";
+$dislike = "0";
 $movie = $_GET['request'];
+
+$userid = $_SESSION['user']['id'];
+$movieID = $movie['movieID'];
 $title = $movie['title'];
 $year = $movie['year'];
 $rated = $movie['rated'];
@@ -84,8 +86,28 @@ if(isset($seasons)){
 	echo ("Seasons: ". $seasons);
 }
 
-
+if(array_key_exists('Like', $_POST)){
+	if(!isset($userid)){
+		flash("Please Login to Like a movie");
+	}
+	else{
+		$response = like($userid, $movieID, $like);
+		if($response === true){
+			flash("Liked ". $title);
+		}
+	}
+}
+else if (array_key_exists('Dislike', $_POST)){
+	 if(!isset($userid)){
+                echo "Please Login to Dislike a movie";
+        }
+ 	else{	
+		$response = like($userid, $movieID, $dislike);
+		if($response === true){
+                	flash("Disliked ". $title);
+		}
+	}
+}
 
 ?>
 <?php require(__DIR__ . "/partials/flash.php");?>
-
