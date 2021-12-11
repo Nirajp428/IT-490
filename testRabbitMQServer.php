@@ -237,6 +237,88 @@ $contents = curl_exec($ch);
 	return $contents;
 }
 
+function friendRequest($userid, $friend, $status){
+	 // connect to DB
+        $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
+
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+
+	//f for friends
+	if($status == "f"){
+
+	}
+
+	//p for pending
+	if($status == "p"){
+
+	}
+
+	//u for unfriend
+	if($status == "u"){
+
+	}	
+}
+
+function like($userid, $movieid, $isLike){
+	 // connect to DB
+        $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
+
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+	
+	$query = "SELECT * from rating WHERE movie_id = '$movieid' AND user_id ='$userid'";
+	$query2 = "SELECT * from rating WHERE movie_id = '$movieid' AND user_id ='$userid' AND isLike = '$isLike'";
+	$res = mysqli_query($mydb, $query);
+	$res2 = mysqli_query($mydb, $query2);
+   if (mysqli_num_rows($res2)>0)
+   {
+	   $delQuery = "DELETE FROM rating WHERE movie_id = '$movieid' AND user_id = '$userid' AND isLike = '$isLike'";
+ 	echo "Entry removed";
+	   return "removed";
+   }	  
+   else{ 
+	if (mysqli_num_rows($res)>0)
+	{
+		$newquery="UPDATE rating SET isLike = '$isLike' WHERE `movie_id` = '$movieid' AND `user_id` = '$userid'";
+
+		if ($mydb->query($newquery) === TRUE) {
+			echo "Rating updated successfully";
+                	return true;
+        	}
+		else 
+		{
+                        echo "Error: " . $newquery . "<br>" . $mydb->error;
+                        return false;
+                }
+
+	}
+
+	else{
+		$query = "INSERT INTO rating(user_id, movie_id, isLike) values ('$userid','$movieid','$isLike')";
+	
+
+		if ($mydb->query($query) === TRUE) {
+			 echo "Rating recorded successfully";
+			 return true;
+	 	}
+	 	else {
+                        echo "Error: " . $query . "<br>" . $mydb->error;
+			return false;	
+		}
+	}
+     }	
+}
 
 
 function requestProcessor($request)
@@ -264,6 +346,12 @@ function requestProcessor($request)
 		return $response;
 	case "getAll":
 		$response = getAllMovies();
+		return $response;
+	case "friendRequest":
+		$response = friendRequest($request['userid'], $request['friend'], $request['status']);
+		return $response;
+	case "like":
+		$response = like($request['userid'], $request['movieid'], $request['isLike']);
 		return $response;
 	case "validate_session":
 		return validateSession($request['sessionId']);
