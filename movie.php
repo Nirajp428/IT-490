@@ -28,8 +28,15 @@ width: 250px;
 <input type="submit" name = "Dislike" class = "back" value = "Dislike"/>
 </form>
 
+
+<!-- This will be used for the Watch List Feature -->
+<form method="post">
+<input type="submit" name = "watchList" class = "back"  value = "watchList"/>
+</form>
+
 <?php
 
+//this is used for the liking system
 function like($userid, $movieid, $isLike)
 {
         $_SESSION['type'] = "like";
@@ -44,6 +51,18 @@ function like($userid, $movieid, $isLike)
 		flash ("Movie dislike");
 	} */
 }
+
+function watchList($userid, $title, $movie_id, $store){
+
+	$_SESSION['type'] = "watchList";
+	$_SESSION['userid'] = $userid;
+	$_SESSION['title'] = $title;
+	$_SESSION['movieid'] = $movieid;
+	$_SESSION['store'] = $store;
+	$response = require('testRabbitMQClient.php');
+
+}
+
 
 $like = "1";
 $dislike = "0";
@@ -86,6 +105,7 @@ if(isset($seasons)){
 	echo ("Seasons: ". $seasons);
 }
 
+//this is for the liking system
 if(array_key_exists('Like', $_POST)){
 	if(!isset($userid)){
 		flash("Please Login to Like a movie");
@@ -108,6 +128,21 @@ else if (array_key_exists('Dislike', $_POST)){
 		}
 	}
 }
+
+//this is for the watchList feature
+if(array_key_exists('watchList', $_POST)){
+	if(!isset($userid)){
+		flash("Please Login to Like a movie");
+	}
+	else{
+		$response = like($userid, $title, $movieID, $store);
+		if($response === true){
+			flash("Added ". $title);
+		}
+	}
+}
+
+
 
 ?>
 <?php require(__DIR__ . "/partials/flash.php");?>
