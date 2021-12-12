@@ -52,13 +52,11 @@ function like($userid, $movieid, $isLike)
 	} */
 }
 
-function watchList($userid, $title, $movie_id, $store){
+function watchList($userid, $movie_id){
 
 	$_SESSION['type'] = "watchList";
 	$_SESSION['userid'] = $userid;
-	$_SESSION['title'] = $title;
 	$_SESSION['movieid'] = $movieid;
-	$_SESSION['store'] = $store;
 	$response = require('testRabbitMQClient.php');
 
 }
@@ -135,7 +133,7 @@ if(array_key_exists('watchList', $_POST)){
 		flash("Please Login to Like a movie");
 	}
 	else{
-		$response = like($userid, $title, $movieID, $store);
+		$response = like($userid, $movieID);
 		if($response === true){
 			flash("Added ". $title);
 		}

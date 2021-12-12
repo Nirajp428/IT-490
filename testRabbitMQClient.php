@@ -68,8 +68,6 @@ switch ($type) {
 		$request['type'] = $_SESSION['type'];
 		$request['userid'] = $_SESSION['userid'];
 		$request['movieid'] = $_SESSION['movieid'];
-		$request['title'] = $_SESSION['title'];
-		$request['store'] = $_SESSION['store'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
 		
