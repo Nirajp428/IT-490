@@ -237,6 +237,8 @@ $contents = curl_exec($ch);
 	return $contents;
 }
 
+
+#function that handles friend requests
 function friendRequest($userid, $friend, $status){
 	 // connect to DB
         $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
@@ -265,6 +267,8 @@ function friendRequest($userid, $friend, $status){
 	}	
 }
 
+
+#function to handle the movie ratings
 function like($userid, $movieid, $isLike){
 	 // connect to DB
         $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
@@ -284,8 +288,17 @@ function like($userid, $movieid, $isLike){
    if (mysqli_num_rows($res2)>0)
    {
 	   $delQuery = "DELETE FROM rating WHERE movie_id = '$movieid' AND user_id = '$userid' AND isLike = '$isLike'";
- 	echo "Entry removed";
-	   return "removed";
+	if ($mydb->query($delQuery) === TRUE) {
+ 		echo "Entry removed";
+           	return "removed";
+        }
+
+	else
+	{
+              	 echo "Error: " . $newquery . "<br>" . $mydb->error;
+              	 return false;
+        }
+   
    }	  
    else{ 
 	if (mysqli_num_rows($res)>0)
@@ -321,6 +334,53 @@ function like($userid, $movieid, $isLike){
 }
 
 
+
+#add movie to watch list
+function addToWatchList($userid, $movieid)
+{
+	// connect to DB
+        $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
+
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+
+
+	if(isset($userid) AND isset($movieid))
+	{
+		$query1 = "SELECT * from watchList WHERE movie_id = '$movieid' AND user_id ='$userid'";
+	        $res1 = mysqli_query($mydb, $query1);		
+		if (mysqli_num_rows($res1)>0)
+   		{
+           		$delQuery = "DELETE FROM watchList WHERE movie_id = '$movieid' AND user_id = '$userid'";
+        		if ($mydb->query($delQuery) === TRUE) {
+                		echo "Movie removed from watch list";
+                		return "removed";
+	        	}
+
+		}
+
+		else{
+			$insertQuery  = "INSERT INTO watchList(user_id, movie_id) VALUES ('$userid', '$movieid')";
+
+			if ($mydb->query($insertQuery) === TRUE) {
+                	        echo "Movie added to watch list successfully";
+                        	return true;
+                	}
+               		else
+                	{
+                        	echo "Error: " . $insertQuery . "<br>" . $mydb->error;
+                        	return false;
+			}
+		}		
+	}	
+}
+
+
 function requestProcessor($request)
 {
   echo "received request".PHP_EOL;
@@ -353,9 +413,14 @@ function requestProcessor($request)
 	case "like":
 		$response = like($request['userid'], $request['movieid'], $request['isLike']);
 		return $response;
+	case "watchlist":
+		$response = addToWatchList($request['userid'], $request['movieid']);
+		return $response;
+
 	case "validate_session":
 		return validateSession($request['sessionId']);
   }
+	
   return array("returnCode" => '0', 'message'=>"Server received request and processed");
 }
 
