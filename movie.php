@@ -26,13 +26,10 @@ width: 250px;
 <form method="post">
 <input type="submit" name = "Like" class = "back"  value = "Like"/>
 <input type="submit" name = "Dislike" class = "back" value = "Dislike"/>
+<input type="submit" name = "addToWatchList" class = "back"  value = "Add to Watch List"/>
 </form>
 
 
-<!-- This will be used for the Watch List Feature -->
-<form method="post">
-<input type="submit" name = "watchList" class = "back"  value = "watchList"/>
-</form>
 
 <?php
 
@@ -54,7 +51,7 @@ function like($userid, $movieid, $isLike)
 
 function watchList($userid, $movie_id){
 
-	$_SESSION['type'] = "watchList";
+	$_SESSION['type'] = "watchlist";
 	$_SESSION['userid'] = $userid;
 	$_SESSION['movieid'] = $movieid;
 	$response = require('testRabbitMQClient.php');
@@ -128,15 +125,19 @@ else if (array_key_exists('Dislike', $_POST)){
 }
 
 //this is for the watchList feature
-if(array_key_exists('watchList', $_POST)){
+if(array_key_exists('addToWatchList', $_POST)){
 	if(!isset($userid)){
-		flash("Please Login to Like a movie");
+		flash("Please Login to add a movie to watch list");
 	}
 	else{
-		$response = like($userid, $movieID);
+		$response = watchList($userid, $movieID);
 		if($response === true){
-			flash("Added ". $title);
-		}
+			echo("Added ". $title. " to watch list");
+        }
+        if($response = "removed"){
+            echo($title. "removed from watch list");
+        
+		}   
 	}
 }
 
