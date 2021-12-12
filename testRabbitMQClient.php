@@ -61,7 +61,18 @@ switch ($type) {
 		$request['movieid'] = $_SESSION['movieid'];
 		$request['isLike'] = $_SESSION['isLike'];
 	        $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+	
+
 		break;
+	case "watchList";
+		$request['type'] = $_SESSION['type'];
+		$request['userid'] = $_SESSION['userid'];
+		$request['movieid'] = $_SESSION['movieid'];
+		$request['title'] = $_SESSION['title'];
+		$request['store'] = $_SESSION['store'];
+		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		break;
+		
 }
 
 $response = $client->send_request($request);
