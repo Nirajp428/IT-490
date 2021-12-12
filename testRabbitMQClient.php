@@ -64,7 +64,7 @@ switch ($type) {
 	
 
 		break;
-	case "watchList";
+	case "watchlist";
 		$request['type'] = $_SESSION['type'];
 		$request['userid'] = $_SESSION['userid'];
 		$request['movieid'] = $_SESSION['movieid'];
