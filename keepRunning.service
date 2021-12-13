@@ -1,0 +1,11 @@
+[Unit]
+Description=Service that keeps running the echo-server from startup.
+After=network.target
+StartLimitIntervalSec=0
+[Install]
+WantedBy=multi-user.target
+[Service]
+Type=simple
+ExecStart=/home/mz342/Desktop/git/IT-490/testRabbitMQServer.php
+Restart=always
+RestartSec=5
