@@ -50,9 +50,9 @@ switch ($type) {
 		break;
 	case "friendRequest":
 		$request['type'] = $_SESSION['type'];
-		$request['userid'] = $_SESSION['user']['id'];
+		$request['user_name'] = $_SESSION['user']['username'];
 		$request['friend'] = $_SESSION['friend'];
-	        $request['status'] = $_SESSION['status'];
+	    $request['status'] = $_SESSION['status'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
 	case "like":
@@ -70,6 +70,9 @@ switch ($type) {
 		$request['movieid'] = $_SESSION['movieid'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
 		break;
+	
+
+		
 		
 }
 
