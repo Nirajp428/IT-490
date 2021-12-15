@@ -15,6 +15,7 @@ require_once(__DIR__ . "/../lib/helpers.php");
 
 
     <?php if (is_logged_in()): ?>
+        <li><a href="searchFriend.php">Friends</a></li>
         <li><a href="profile.php">Profile</a></li>
         <li><a href="logout.php">Logout</a></li>
         <li><a href="https://watchparty.me">WatchParty</a></li>
