@@ -19,6 +19,9 @@ function friendRequest($username, $friend, $status){
     if($response == "requestSent"){
         echo "Request Sent"
     }
+    if($response == "alreadySent"){
+        echo "Request already sent";
+    }
 
 if (isset($_POST["submit"])) {
     $search = null;
