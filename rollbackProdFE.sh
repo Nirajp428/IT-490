@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# rollback Primary VM
+ssh mattv@<IP ADDRESS>
+rm -d ~/Desktop/Git/IT-490
+cp ~/Desktop/Git/backup/* ~/Desktop/Git/IT-490
+
+# rollback Stand By VM
+ssh mattv@<IP ADDRESS>
+rm -d ~/Desktop/Git/IT-490
+cp ~/Desktop/Git/backup/* ~/Desktop/Git/IT-490
+
+
