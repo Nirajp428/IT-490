@@ -10,12 +10,14 @@ ssh mattv@<IP ADDRESS>
 cd /home/mattv/Desktop/Git/deployment/FE
 
 # back up IT-490 folder for rollback function
+rm -d ~/Desktop/Git/backup
 cp /home/mattv/Desktop/Git/IT-490/* /home/mattv/Desktop/Git/backup
 
 #extract files in tar.gz to IT-490 folder
 tar -xvf $file -C /home/mattv/Desktop/Git/IT-490
 
 # copy files to /var/www/html for front end
+sudo rm -d /var/www/html
 sudo cp /home/mattv/Desktop/Git/IT-490/* /var/www/html
 
 rm $file
@@ -29,6 +31,7 @@ ssh mattv@<IP ADDRESS>
 cd /home/mattv/Desktop/Git/deployment/FE
 
 # back up IT-490 folder for rollback function
+rm -d ~/Desktop/Git/backup
 cp /home/mattv/Desktop/Git/IT-490/* /home/mattv/Desktop/Git/backup
 
 
@@ -36,6 +39,7 @@ cp /home/mattv/Desktop/Git/IT-490/* /home/mattv/Desktop/Git/backup
 tar -xvf $file -C /home/mattv/Desktop/Git/IT-490
 
 # copy files to /var/www/html for front end
+sudo rm -d /var/www/html
 sudo cp /home/mattv/Desktop/Git/IT-490/* /var/www/html
 
 rm $file

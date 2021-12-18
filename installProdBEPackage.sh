@@ -10,6 +10,7 @@ ssh niraj@10.242.91.160
 cd /home/niraj/Desktop/Git/deployment/BE
 
 # back up IT-490 folder for rollback function
+rm -d ~/Desktop/Git/backup
 cp /home/niraj/Desktop/Git/IT-490/* /home/niraj/Desktop/Git/backup
 
 #extract files in tar.gz to IT-490 folder
@@ -26,6 +27,7 @@ ssh niraj@10.242.106.20
 cd /home/niraj/Desktop/Git/deployment/BE
 
 # back up IT-490 folder for rollback function
+rm -d ~/Desktop/Git/backup
 cp /home/niraj/Desktop/Git/IT-490/* /home/niraj/Desktop/Git/backup
 
 

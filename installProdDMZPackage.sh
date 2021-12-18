@@ -10,6 +10,7 @@ ssh kevin@10.242.172.64
 cd /home/kevin/Desktop/Git/deployment/dmz
 
 # back up IT-490 folder for rollback function
+rm -d ~/Desktop/Git/backup
 cp /home/kevin/Desktop/Git/IT-490/* /home/kevin/Desktop/Git/backup
 
 #extract files in tar.gz to IT-490 folder
@@ -26,6 +27,7 @@ ssh kevin@10.242.223.100
 cd /home/kevin/Desktop/Git/deployment/dmz
 
 # back up IT-490 folder for rollback function
+rm -d ~/Desktop/Git/backup
 cp /home/kevin/Desktop/Git/IT-490/* /home/kevin/Desktop/Git/backup
 
 
