@@ -22,7 +22,7 @@ rm $file
 scp -r /home/chiragkumar/git/deployment/dmz/$file kevin@10.242.223.100:/home/kevin/Desktop/Git/deployment/dmz
 
 
-ssh kevin@10.242.223.100:
+ssh kevin@10.242.223.100
 cd /home/kevin/Desktop/Git/deployment/dmz
 
 # back up IT-490 folder for rollback function
