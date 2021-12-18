@@ -15,6 +15,9 @@ cp /home/mattv/Desktop/Git/IT-490/* /home/mattv/Desktop/Git/backup
 #extract files in tar.gz to IT-490 folder
 tar -xvf $file -C /home/mattv/Desktop/Git/IT-490
 
+# copy files to /var/www/html for front end
+sudo cp /home/mattv/Desktop/Git/IT-490/* /var/www/html
+
 rm $file
 
 
@@ -31,5 +34,8 @@ cp /home/mattv/Desktop/Git/IT-490/* /home/mattv/Desktop/Git/backup
 
 #extract files in tar.gz to IT-490 folder
 tar -xvf $file -C /home/mattv/Desktop/Git/IT-490
+
+# copy files to /var/www/html for front end
+sudo cp /home/mattv/Desktop/Git/IT-490/* /var/www/html
 
 rm $file
