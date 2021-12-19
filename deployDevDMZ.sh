@@ -8,7 +8,7 @@ do
 	if ! [[ -f "DMZDev$x.tar.gz" ]]
 	then
 		tar -czvf DMZDev$x.tar.gz ~/Desktop/Git/IT-490/*
-		scp DMZDev$x.tar.gz deploymentserver@10.147.17.236:/home/chiragkumar/git/deployment/dmz
+		scp DMZDev$x.tar.gz chiragkumar@10.147.17.236:/home/chiragkumar/git/deployment/dmz
 		break
 	fi
 done
