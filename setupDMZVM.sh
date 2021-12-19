@@ -1,4 +1,6 @@
 #!/bin/bash
+cd /home/chiragkumar/git/setup
+scp keepPrimaryDMZRunning.service primaryDMZRabbitMQServer.php kevin@10.242.172.64:/tmp
 
 # primary DMZ
 ssh kevin@10.242.172.64
@@ -25,16 +27,19 @@ sudo ufw allow proto tcp from [10.242.172.64] to any port 5672
 
 
 # systemd
-scp keepPrimaryDMZRunning.service kevin@10.242.172.64:/tmp
-cd /tmp
+cp /tmp/primaryDMZRabbitMQServer.php ~/Git/IT-490
 sudo cp keepPrimaryDMZRunning.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl start keepPrimaryDMZRunning.service
 sudo systemctl enable keepPrimaryDMZRunning.service
 
 
+exit
 
 # stand by DMZ
+cd /home/chiragkumar/git/setup
+scp keepStandbyDMZRunning.service standbyDMZRabbitMQServer.php kevin@10.242.223.100:/tmp
+
 ssh kevin@10.242.223.100
 
 # install software
@@ -59,8 +64,7 @@ sudo ufw allow proto tcp from [10.242.223.100] to any port 5672
 
 
 # systemd
-scp keepStandbyDMZRunning.service kevin@10.242.223.100:/tmp
-cd /tmp
+cp /tmp/standbyDMZRabbitMQServer.php ~/Git/IT-490
 sudo cp keepStandbyDMZRunning.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl start keepStandbyDMZRunning.service
