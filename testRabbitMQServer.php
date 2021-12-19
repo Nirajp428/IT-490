@@ -160,6 +160,12 @@ function getMovie($movie)
 		$_SESSION['type'] = 'APIrequest';
                 $_SESSION['movie'] = "$movie";
 
+		// restart systemd service
+		$old_path = getcwd();
+		chdir("/home/niraj/Git/IT-490");
+		shell_exec('./restartSystemd.sh');
+		chdir($old_path);
+
 		// call dmz server
 		$response = require("testRabbitMQClient.php");
 		$array = json_decode($response, true);
@@ -267,8 +273,6 @@ function friendRequest($username, $friend, $status){
         		$all = json_encode($arr);
        			echo $all;
         		return $all;
-
-			
 		}
 	}
 
@@ -292,15 +296,19 @@ function friendRequest($username, $friend, $status){
 			return "alreadySent";
 		}
 	}
-
-	//u for unfriend
-	if($status == "u"){
-
+	
+	
+	//r for reject friend request
+	if($status == "r"){
+		$query = "UPDATE friendsTable SET friendStatus = 'r' WHERE `username` = '$username' AND `friendName` = '$friend'";
+		if ($mydb->query($query) === TRUE) {
+ 		echo "Entry removed";
+           	return "removed";
 	}	
 }
 
 #function to display friend requests 
-function friendDisplay($username){
+function friendDisplay($username, $status){
 	  // connect to DB
         $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
 
@@ -311,20 +319,34 @@ function friendDisplay($username){
                 exit(0);
         }
         echo "successfully connected to database".PHP_EOL;
-
-	$query = "SELECT username FROM friendsTable  WHERE friendName = '$username' AND friendStatus = 'p'";
 	
-	$result = $mydb->query($query);
-        $arr = array();
-        while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-                $arr[] = $row;
-        }
+	//p to display pending request
+	if($status == 'p'){
+		$query = "SELECT username FROM friendsTable  WHERE friendName = '$username' AND friendStatus = 'p'";
+	
+		$result = $mydb->query($query);
+        	$arr = array();
+        	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+                	$arr[] = $row;
+        	}
 
-        $all = json_encode($arr);
-	echo $all;
-	return $all;
+        	$all = json_encode($arr);
+		return $all;
+	}
+	
+	//f to display friends
+	if ($status =='f'){
+		$query = "SELECT username FROM friendsTable  WHERE friendName = '$username' AND friendStatus = 'f'";
+	
+		$result = $mydb->query($query);
+        	$arr = array();
+        	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+                	$arr[] = $row;
+        	}
+        	$all = json_encode($arr);
+		return $all;	
+	}
 }
-
 
 
 #function to handle the movie ratings
@@ -492,7 +514,7 @@ function requestProcessor($request)
 		$response = friendRequest($request['username'], $request['friend'], $request['status']);
 		return $response;
 	case "friendDisplay":
-		$response = friendDisplay($request['username']);
+		$response = friendDisplay($request['username'], $request['status']);
 		return $response;
 
 	case "like":
