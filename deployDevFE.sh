@@ -8,7 +8,7 @@ do
 	if ! [[ -f "FEDev$x.tar.gz" ]]
 	then
 		tar -czvf FEDev$x.tar.gz ~/Desktop/Git/IT-490/*
-		scp FEDev$x.tar.gz serverdeployment@10.147.17.236:/home/chiragkumar/git/deployment/FE
+		scp FEDev$x.tar.gz chiragkumar@10.147.17.236:/home/chiragkumar/git/deployment/FE
 		break
 	fi
 done
