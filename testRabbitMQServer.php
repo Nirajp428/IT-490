@@ -336,7 +336,7 @@ function friendDisplay($username, $status){
 	
 	//f to display friends
 	if ($status =='f'){
-		$query = "SELECT username FROM friendsTable  WHERE friendName = '$username' AND friendStatus = 'f'";
+		$query = "SELECT username FROM friendsTable  WHERE username = '$username' AND friendStatus = 'f'";
 	
 		$result = $mydb->query($query);
         	$arr = array();
