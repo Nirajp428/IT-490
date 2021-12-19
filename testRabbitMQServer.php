@@ -160,7 +160,13 @@ function getMovie($movie)
 		$_SESSION['type'] = 'APIrequest';
                 $_SESSION['movie'] = "$movie";
 
-                // call dmz server
+		// restart systemd service
+		$old_path = getcwd();
+		chdir("/home/niraj/Git/IT-490");
+		shell_exec('./restartSystemd.sh');
+		chdir($old_path);
+
+		// call dmz server
 		$response = require("testRabbitMQClient.php");
 		$array = json_decode($response, true);
 
