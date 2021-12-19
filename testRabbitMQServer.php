@@ -239,7 +239,7 @@ $contents = curl_exec($ch);
 
 
 #function that handles friend requests
-function friendRequest($userid, $friend, $status){
+function friendRequest($username, $friend, $status){
 	 // connect to DB
         $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
 
@@ -253,12 +253,44 @@ function friendRequest($userid, $friend, $status){
 
 	//f for friends
 	if($status == "f"){
+		$newquery="UPDATE friendsTable SET friendStatus = 'f' WHERE `username` = '$username' AND `friendName` = '$friend'";
 
+                if ($mydb->query($newquery) === TRUE) {
+                        echo "Friend request accepted";
+			$friendsQuery = "SELECT * FROM friendsTable WHERE username = '$username' AND friendStatus = 'f'";
+			$result = $mydb->query($friendQuery);
+		        $arr = array();
+        		while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+                		$arr[] = $row;
+        		}
+
+        		$all = json_encode($arr);
+       			echo $all;
+        		return $all;
+
+			
+		}
 	}
 
 	//p for pending
 	if($status == "p"){
-
+		$query = "SELECT username FROM Users WHERE username = '$friend'";
+		$checkQuery = "SELECT * FROM friendsTable WHERE username = '$username' AND friendName = '$friend' AND friendStatus = 'p'";
+		$checkRes = mysqli_query($mydb, $checkQuery);
+		if(mysqli_num_rows($checkRes)==0)
+		{
+			$res = mysqli_query($mydb, $query);
+			if (mysqli_num_rows($res)>0)
+        		{
+				$query2 = "INSERT INTO friendsTable(username, friendName, friendStatus) values ('$username','$friend','p')";
+				$res2 = mysqli_query($mydb, $query2);
+				return "requestSent";
+			}
+		}
+		else{
+			echo "Request already sent";
+			return "alreadySent";
+		}
 	}
 
 	//u for unfriend
@@ -266,6 +298,33 @@ function friendRequest($userid, $friend, $status){
 
 	}	
 }
+
+#function to display friend requests 
+function friendDisplay($username){
+	  // connect to DB
+        $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
+
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+
+	$query = "SELECT username FROM friendsTable  WHERE friendName = '$username' AND friendStatus = 'p'";
+	
+	$result = $mydb->query($query);
+        $arr = array();
+        while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+                $arr[] = $row;
+        }
+
+        $all = json_encode($arr);
+	echo $all;
+	return $all;
+}
+
 
 
 #function to handle the movie ratings
@@ -307,7 +366,7 @@ function like($userid, $movieid, $isLike){
 
 		if ($mydb->query($newquery) === TRUE) {
 			echo "Rating updated successfully";
-                	return true;
+                	return $isLike;
         	}
 		else 
 		{
@@ -323,7 +382,7 @@ function like($userid, $movieid, $isLike){
 
 		if ($mydb->query($query) === TRUE) {
 			 echo "Rating recorded successfully";
-			 return true;
+			 return $isLike;
 	 	}
 	 	else {
                         echo "Error: " . $query . "<br>" . $mydb->error;
@@ -369,15 +428,37 @@ function addToWatchList($userid, $movieid)
 
 			if ($mydb->query($insertQuery) === TRUE) {
                 	        echo "Movie added to watch list successfully";
-                        	return true;
+                        	return "added";
                 	}
-               		else
-                	{
-                        	echo "Error: " . $insertQuery . "<br>" . $mydb->error;
-                        	return false;
-			}
 		}		
 	}	
+}
+
+
+function displayWatchList($userid){
+	// connect to DB
+        $mydb = new mysqli('127.0.0.1','matt','12345','IT490DB');
+
+        if ($mydb->errno != 0)
+        {
+                echo "failed to connect to database: ". $mydb->error . PHP_EOL;
+                logError(date('m-d-Y--h:i:s a'), "Failed to connect to database in testRabbitMQServer.php getMovie function", php_uname('n'));
+                exit(0);
+        }
+        echo "successfully connected to database".PHP_EOL;
+
+	if(isset($userid)){
+		$query = "SELECT Movies.*, watchList.user_id FROM Movies  LEFT JOIN watchList ON watchList.movie_id = Movies.movieID WHERE watchList.user_id = '$userid'";
+		$result = $mydb->query($query);
+
+	        $arr = array();
+       		while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+               		$arr[] = $row;
+        	}
+
+      	 	$all = json_encode($arr);
+		return $all;
+	}
 }
 
 
@@ -408,15 +489,22 @@ function requestProcessor($request)
 		$response = getAllMovies();
 		return $response;
 	case "friendRequest":
-		$response = friendRequest($request['userid'], $request['friend'], $request['status']);
+		$response = friendRequest($request['username'], $request['friend'], $request['status']);
 		return $response;
+	case "friendDisplay":
+		$response = friendDisplay($request['username']);
+		return $response;
+
 	case "like":
 		$response = like($request['userid'], $request['movieid'], $request['isLike']);
 		return $response;
 	case "watchlist":
 		$response = addToWatchList($request['userid'], $request['movieid']);
 		return $response;
-
+	
+	case "displayWatchList":
+		$response = displayWatchList($request['userid']);
+		return $response;
 	case "validate_session":
 		return validateSession($request['sessionId']);
   }
