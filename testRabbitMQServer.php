@@ -27,6 +27,7 @@ function validateSession($sessionID)
 	// return false if not, redirect user to login page
 }
 
+/*
 # DB function
 function doLogin($username,$password)
 {
@@ -45,7 +46,8 @@ function doLogin($username,$password)
 		return 'false';
 	}
 }
-
+ */
+/*
 # DB function
 function register($username, $password, $email)
 {
@@ -85,7 +87,8 @@ function register($username, $password, $email)
 		exit(0);
 	}
 }
-
+ */
+/*
 # DB function
 function getMovie($movie)
 {
@@ -113,7 +116,8 @@ function getMovie($movie)
 		logError(date('m-d-Y--h:i:s a'), "Boolean error in getMovie() in testRabbitMQServer.php", php_uname('n'));
 	}
 }
-
+ */
+/*
 // DMZ function
 function APICall($movie)
 {
@@ -123,7 +127,7 @@ function APICall($movie)
 	$contents = curl_exec($ch);
 	return $contents;
 }
-
+ */
 
 
 function requestProcessor($request)

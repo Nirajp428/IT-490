@@ -20,47 +20,47 @@ switch ($type) {
 		$request['type'] = $_SESSION['type'];
 		$request['email'] = $_SESSION['email'];
 		$request['password'] = $_SESSION['password'];
-		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	case "register":
 		$request['type'] = $_SESSION['type'];
 		$request['username'] = $_SESSION['username'];
                 $request['password'] = $_SESSION['password'];
 		$request['email'] = $_SESSION['email'];
-		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	case "request":
 		$request['type'] = $_SESSION['type'];
 		$request['movie'] = $_SESSION['movie'];
-		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	case "APIrequest":
 		$request['type'] = $_SESSION['type'];
                 $request['movie'] = $_SESSION['movie'];
-                $client = new rabbitMQClient("testRabbitMQ.ini","dmzServer");
+                $client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
                 break;
 	case "validateSession":
 		$request['type'] = $_SESSION['type'];
 		$request['sessionID'] = $_SESSION['sessionID'];
-                $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+                $client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	case "getAll":
 		$request['type'] = $_SESSION['type'];
-		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	case "friendRequest":
 		$request['type'] = $_SESSION['type'];
 		$request['user_name'] = $_SESSION['user']['username'];
 		$request['friend'] = $_SESSION['friend'];
 	    $request['status'] = $_SESSION['status'];
-		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	case "like":
 		$request['type'] = $_SESSION['type'];
 		$request['userid'] = $_SESSION['userid'];
 		$request['movieid'] = $_SESSION['movieid'];
 		$request['isLike'] = $_SESSION['isLike'];
-	        $client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+	        $client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 	
 
 		break;
@@ -68,7 +68,7 @@ switch ($type) {
 		$request['type'] = $_SESSION['type'];
 		$request['userid'] = $_SESSION['userid'];
 		$request['movieid'] = $_SESSION['movieid'];
-		$client = new rabbitMQClient("testRabbitMQ.ini","dbServer");
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
 	
 
