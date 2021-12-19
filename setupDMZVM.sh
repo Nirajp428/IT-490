@@ -17,7 +17,7 @@ sudo ufw allow proto tcp from [10.242.172.64] to any port 465
 sudo ufw allow proto tcp from [10.242.172.64] to any port 22
 
 # zerotier port
-sudo ufw allow proto tcp from [10.242.172.64] to any port 9993
+sudo ufw allow proto udp from [10.242.172.64] to any port 9993
 
 # RabbitMQ port
 sudo ufw allow proto tcp from [10.242.172.64] to any port 5672
@@ -52,7 +52,7 @@ sudo ufw allow proto tcp from [10.242.223.100] to any port 465
 sudo ufw allow proto tcp from [10.242.223.100] to any port 22
 
 # zerotier port
-sudo ufw allow proto tcp from [10.242.223.100] to any port 9993
+sudo ufw allow proto udp from [10.242.223.100] to any port 9993
 
 # RabbitMQ port
 sudo ufw allow proto tcp from [10.242.223.100] to any port 5672
