@@ -302,9 +302,10 @@ function friendRequest($username, $friend, $status){
 	if($status == "r"){
 		$query = "UPDATE friendsTable SET friendStatus = 'r' WHERE `username` = '$username' AND `friendName` = '$friend'";
 		if ($mydb->query($query) === TRUE) {
- 		echo "Entry removed";
-           	return "removed";
-	}	
+ 			echo "Entry removed";
+           		return "removed";
+		}	
+	}
 }
 
 #function to display friend requests 
