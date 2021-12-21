@@ -37,7 +37,7 @@ switch ($type) {
 	case "APIrequest":
 		$request['type'] = $_SESSION['type'];
                 $request['movie'] = $_SESSION['movie'];
-                $client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
+                $client = new rabbitMQClient("testRabbitMQ.ini","dmzServer");
                 break;
 	case "validateSession":
 		$request['type'] = $_SESSION['type'];
@@ -50,30 +50,36 @@ switch ($type) {
 		break;
 	case "friendRequest":
 		$request['type'] = $_SESSION['type'];
-		$request['user_name'] = $_SESSION['user']['username'];
+		$request['username'] = $_SESSION['user']['username'];
 		$request['friend'] = $_SESSION['friend'];
-	    $request['status'] = $_SESSION['status'];
+	        $request['status'] = $_SESSION['status'];
 		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
+	case "friendDisplay":
+		$request['type'] = $_SESSION['type'];
+                $request['username'] = $_SESSION['user']['username'];
+		$request['status'] = $_SESSION['status'];
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
+                break;
+
 	case "like":
 		$request['type'] = $_SESSION['type'];
 		$request['userid'] = $_SESSION['userid'];
 		$request['movieid'] = $_SESSION['movieid'];
 		$request['isLike'] = $_SESSION['isLike'];
 	        $client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
-	
-
 		break;
-	case "watchlist";
+	case "watchlist":
 		$request['type'] = $_SESSION['type'];
-		$request['userid'] = $_SESSION['userid'];
-		$request['movieid'] = $_SESSION['movieid'];
+                $request['userid'] = $_SESSION['userid'];
+		$request['movieid'] = $_SESSION['movieid'];		 
 		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
 		break;
-	
-
-		
-		
+	case "displayWatchList":
+		$request['type'] = $_SESSION['type'];
+		$request['userid'] = $_SESSION['user']['id'];
+		$client = new rabbitMQClient("testRabbitMQ.ini","backEndServer");
+                break;
 }
 
 $response = $client->send_request($request);
