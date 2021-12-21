@@ -1,28 +1,69 @@
-<?php require_once(__DIR__ . "/partials/nav.php"); ?>
+<?php require_once(__DIR__ . "/partials/nav.php");
+require_once("sendMessage.php") ?>
+
+<style>
+img{
+height: 200px;
+width: 150px;
+}
+</style>
+
 <?php
-//Note: we have this up here, so our update happens before our get/fetch
-//that way we'll fetch the updated data and have it correctly reflect on the form below
-//As an exercise swap these two and see how things change
 if (!is_logged_in()) {
-    //this will redirect to login and kill the rest of this script (prevent it from executing)
     flash("You must be logged in to access this page");
     die(header("Location: login.php"));
 }
+$username = "";
+if (isset($_SESSION["user"]) && isset($_SESSION["user"]["email"])) {
+        $username = $_SESSION["user"]["username"];
+	echo "<strong>";                
+	echo ("Welcome to Your Profile, ".$username);
+        echo "</strong>";                
 
+}
+echo "<br>";
+echo "<br>";
+	
+
+if(is_logged_in()){
+       	echo "<strong>";
+	echo ("Saved Movies:"."<br>");
+        echo "</strong>";
+	$response = displayWatchList();
+	
+	echo ("<br>"."<br>");
+	echo "<strong>";
+        echo ("Friends:"."<br>");
+        echo "</strong>";
+//	$returned = friendDisplay();
+        echo '<a href="showFriends.php">Show Friends</a>';
+
+}
+/*
+function friendDisplay(){
+        $_SESSION['type'] = "friendDisplay";
+        $_SESSION['status']='f';
+        $_SESSION['username'] = $_SESSION['user']['username'];
+        $returned = require("testRabbitMQClient.php");
+echo $returned;
+	
+        if($returned != NULL){
+                $arr = json_decode($returned, true);
+                $newArr = [];
+                foreach($arr as $data => $val)
+                {
+                       $newArr[] = $val;
+                }
+                foreach($newArr as $key => $val)
+	        {
+                        $friend = $val['friendName'];
+                        echo ($friend);
+                        echo "<br>";
+                }
+        }
+        else {
+                echo "No Friends";
+	}
+} */
 ?>
-  <body>
-   <br />
-    <form method="POST">
-        <label for="email">Email</label>
-        <input type="email" name="email" value="<?php safer_echo(get_email()); ?>"/>
-        <label for="username">Username</label>
-        <input type="text" maxlength="60" name="username" value="<?php safer_echo(get_username()); ?>"/>
-        <!-- DO NOT PRELOAD PASSWORD-->
-        <label for="pw">Password</label>
-        <input type="password" name="password"/>
-        <label for="cpw">Confirm Password</label>
-        <input type="password" name="confirm"/>
-        <input type="submit" name="saved" value="Save Profile"/>
- <br /> 
-  </body>
 <?php require(__DIR__ . "/partials/flash.php");
